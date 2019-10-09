@@ -1,0 +1,11 @@
+<virtual-scroll windowScroll
+                [items]="list"
+                [itemRender]="itemTemplate"
+                visiblePages="3"
+                placeholderPages="0"
+                adjustFactor="0.5"
+                itemHeight="30">
+  <ng-template #itemTemplate let-item>
+    <div class="item">{{item.name}}</div>
+  </ng-template>
+</virtual-scroll>

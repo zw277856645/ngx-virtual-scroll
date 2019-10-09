@@ -17,7 +17,8 @@
                [ngTemplateOutletContext]="{$implicit:item.itemHeight}"></ng-template>
 </ng-template>
 
-<div class="items-container">
+<div class="items-container" #itemsContainer>
+  <div class="item">1</div>
   <ng-container *ngFor="let item of viewPortItems;trackBy:trackByItems;index as i;count as ct">
     <ng-template [ngTemplateOutlet]="itemWrapperTemplate"
                  [ngTemplateOutletContext]="{$implicit:createItemRenderContext(item,i,ct)}"></ng-template>

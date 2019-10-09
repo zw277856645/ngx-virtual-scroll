@@ -1,5 +1,5 @@
 import {
-    AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2,
+    AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, Renderer2,
     SimpleChanges, TemplateRef, TrackByFunction, ViewChild
 } from '@angular/core';
 import { InputBoolean, InputNumber } from 'cmjs-lib';
@@ -27,6 +27,7 @@ export class ItemChanges<T> {
 export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('totalHeight', { static: false }) totalHeight: ElementRef;
+    @ViewChild('itemsContainer', { static: false }) itemsContainer: ElementRef;
 
     // 是否是 window 滚动，默认为指令所在元素为滚动窗体
     @Input() @InputBoolean() windowScroll: boolean;
@@ -86,6 +87,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     private scrollDirection: 'up' | 'down' = 'down';
     private lastOffsetY: number = 0;
+    private minItemHeight: number;
+    private lastItemsContainerOffsetY: number = 0;
 
     private readonly body: HTMLElement;
     private readonly ele: HTMLElement;
@@ -93,7 +96,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     private readonly ITEM_ID_KEY = '_vs_id';
 
     constructor(private eleRef: ElementRef,
-                private renderer: Renderer2) {
+                private renderer: Renderer2,
+                private zone: NgZone) {
         this.ele = eleRef.nativeElement;
         this.body = document.body;
     }
@@ -162,26 +166,37 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         this.placeholderPages = Math.max(0, this.placeholderPages);
         this.adjustFactor = Math.max(0, Math.min(1, this.adjustFactor));
 
-        // 计算屏幕/容器上、中、下渲染所需高度(px)
-        let totalPages = this.visiblePages + this.placeholderPages;
-        let middleArea = this.windowScroll ? this.body.clientHeight : this.containerMaxHeight;
-        let topArea = (totalPages - 1) / 2 * this.getAdjustFactorByDirection().top * middleArea;
-        let bottomArea = (totalPages - 1) / 2 * this.getAdjustFactorByDirection().bottom * middleArea;
+        this.zone.runOutsideAngular(() => {
+            // 滚动条滚动了至少最小高度时，才会移动 itemsContainer
+            if (Math.abs(this.lastOffsetY - this.lastItemsContainerOffsetY) >= this.minItemHeight) {
+                this.lastItemsContainerOffsetY = this.lastOffsetY;
+                this.renderer.setStyle(
+                    this.itemsContainer.nativeElement,
+                    'transform',
+                    `translateY(${this.lastOffsetY}px)`
+                );
+            }
 
-        // 处理滚动条靠近顶部或底部的情况
-        if (this.windowScroll) {
+            // 计算屏幕/容器上、中、下渲染所需高度(px)
+            let totalPages = this.visiblePages + this.placeholderPages;
+            let middleArea = this.windowScroll ? this.body.clientHeight : this.containerMaxHeight;
+            let topArea = (totalPages - 1) / 2 * this.getAdjustFactorByDirection().top * middleArea;
+            let bottomArea = (totalPages - 1) / 2 * this.getAdjustFactorByDirection().bottom * middleArea;
+
+            // 处理滚动条靠近顶部或底部的情况
             topArea = Math.min(topArea, this.lastOffsetY);
-            bottomArea = Math.min(bottomArea, this.body.scrollHeight - this.body.clientHeight - this.lastOffsetY);
-        } else {
-            topArea = Math.min(topArea, this.ele.scrollTop);
-            bottomArea = Math.min(bottomArea, this.ele.scrollHeight - this.ele.clientHeight - this.ele.scrollTop);
-        }
+            if (this.windowScroll) {
+                bottomArea = Math.min(bottomArea, this.body.scrollHeight - this.body.clientHeight - this.lastOffsetY);
+            } else {
+                bottomArea = Math.min(bottomArea, this.ele.scrollHeight - this.ele.clientHeight - this.lastOffsetY);
+            }
 
-        // 计算哪些条目需要渲染(占位符)
-        let aggrHeight = 0;
-        for (let item of this.items as { itemHeight?: any }[]) {
-            aggrHeight += item.itemHeight;
-        }
+            // 计算哪些条目需要渲染(占位符)
+            let aggrHeight = 0;
+            for (let item of this.items as { itemHeight?: any }[]) {
+                aggrHeight += item.itemHeight;
+            }
+        });
     }
 
     private getAdjustFactorByDirection() {
@@ -238,6 +253,11 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 }
             }, 0);
             this.renderer.setStyle(this.totalHeight.nativeElement, 'height', height + 'px');
+
+            // 缓存最小高度
+            this.minItemHeight = this.items.reduce((prev, cur: { itemHeight?: number }) => {
+                return Math.min(prev, cur.itemHeight);
+            }, Number.MAX_SAFE_INTEGER);
         }
     }
 
@@ -246,16 +266,21 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             merge(
                 fromEvent(window, 'resize'),
                 fromEvent(this.windowScroll ? window : this.ele, 'scroll').pipe(
-                    throttleTime(100),
                     map(() => {
-                        this.scrollDirection = window.pageYOffset > this.lastOffsetY ? 'down' : 'up';
-                        this.lastOffsetY = window.pageYOffset;
+                        if (this.windowScroll) {
+                            this.scrollDirection = window.pageYOffset > this.lastOffsetY ? 'down' : 'up';
+                            this.lastOffsetY = window.pageYOffset;
+                        } else {
+                            this.scrollDirection = this.ele.scrollTop > this.lastOffsetY ? 'down' : 'up';
+                            this.lastOffsetY = this.ele.scrollTop;
+                        }
+
                         this.refreshPlaceholders();
                     })
                 )
             ).pipe(
                 map(() => this.renderer.setStyle(this.body, 'pointer-events', 'none')),
-                debounceTime(500),
+                debounceTime(500)
             ).subscribe(() => this.refresh())
         );
     }
