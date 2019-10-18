@@ -1,0 +1,47 @@
+<!-- 默认占位符渲染模板 -->
+<ng-template #placeholderTemplate>
+  <div class="placeholder">
+    <div class="loader"></div>
+  </div>
+</ng-template>
+
+<!-- 空渲染模板 -->
+<ng-container *ngIf="(!items || !items.length) && emptyRender">
+  <ng-template [ngTemplateOutlet]="emptyRender"></ng-template>
+</ng-container>
+
+<!-- 仅用于撑开高度 -->
+<div class="total-height" [class.empty]="!items || !items.length" #totalHeight></div>
+
+<div class="items-container" #itemsContainer>
+  <ng-container *ngFor="let item of viewportItems;trackBy:trackByItems">
+    <!-- 真实条目 & 支持动态高度 -->
+    <ng-container
+      *ngIf="observeChanges && (itemRender ? item[internalAttrs.visible] : true); else placeholderFinalTemplate">
+      <div class="item-wrapper real"
+           [style.min-height.px]="item[internalAttrs.height]"
+           @stopChildrenAnimations>
+        <div itemObserver
+             [item]="item"
+             [style.padding-top.px]="itemGap / 2"
+             [style.padding-bottom.px]="itemGap / 2"
+             (heightChanged)="mergeHeightChanges()">
+          <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"
+                       [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- 其他 -->
+    <ng-template #placeholderFinalTemplate>
+      <div class="item-wrapper"
+           [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
+           [style.padding-top.px]="itemGap / 2"
+           [style.padding-bottom.px]="itemGap / 2">
+        <ng-template
+          [ngTemplateOutlet]="item[internalAttrs.visible] ? (itemRender || placeholderRender) : placeholderRender"
+          [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+      </div>
+    </ng-template>
+  </ng-container>
+</div>
