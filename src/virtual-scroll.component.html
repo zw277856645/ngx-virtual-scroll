@@ -19,13 +19,14 @@
     <ng-container
       *ngIf="observeChanges && (itemRender ? item[internalAttrs.visible] : true); else placeholderFinalTemplate">
       <div class="item-wrapper real"
+           [id]="item[internalAttrs.id]"
            [style.min-height.px]="item[internalAttrs.height]"
            @stopChildrenAnimations>
         <div itemObserver
              [item]="item"
              [style.padding-top.px]="itemGap / 2"
              [style.padding-bottom.px]="itemGap / 2"
-             (heightChanged)="mergeHeightChanges()">
+             (heightChanged)="mergeHeightChanges($event)">
           <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"
                        [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
         </div>
@@ -35,6 +36,7 @@
     <!-- 其他 -->
     <ng-template #placeholderFinalTemplate>
       <div class="item-wrapper"
+           [id]="item[internalAttrs.id]"
            [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
            [style.padding-top.px]="itemGap / 2"
            [style.padding-bottom.px]="itemGap / 2">

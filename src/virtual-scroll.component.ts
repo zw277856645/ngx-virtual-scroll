@@ -3,11 +3,12 @@ import {
     SimpleChanges, TemplateRef, ViewChild
 } from '@angular/core';
 import { getScrollTop, InputBoolean, InputNumber, setScrollTop, uuid } from 'cmjs-lib';
-import { animationFrameScheduler, asapScheduler, fromEvent, merge, Subject, Subscription } from 'rxjs';
+import { animationFrameScheduler, asapScheduler, fromEvent, Subject, Subscription } from 'rxjs';
 import { auditTime, debounceTime, map } from 'rxjs/operators';
 import { NgForOfContext } from '@angular/common';
 import {
-    ItemChanges, ItemInternalAttrs, RefreshConfig, RefreshType, ScrollConfig, ScrollDirection, ViewportInfo
+    ItemChanges, ItemInternalAttrs, RefreshConfig, RefreshItemsConfig, RefreshType, ScrollConfig, ScrollDirection,
+    ViewportInfo
 } from './models';
 import { animate, transition, trigger } from '@angular/animations';
 
@@ -84,14 +85,17 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 监测条目 DOM 变化的时间间隔，只在 observeChanges = true 时有效
     @Input() @InputNumber() observeIntervalTime: number = 300;
 
+    // 条目动态高度判断逻辑，返回大于0的数值代表符合条件，其他都为条件不成立，插件将自动读取原生 DOM 属性
+    // 提供该配置可加快布局刷新，因为插件自动读取需要经历比较多的轮回才能确定高度稳定，有一定的时间浪费
+    // 动态高度可能有多种不同的场景，只需处理高度固定的场景，其他场景返回空即可
+    // 只在 observeChanges = true 时有效
+    @Input() dynamicHeight: (item: T) => number = () => null;
+
     // 可视条目改变
     @Output() readonly visibleItemsChange = new EventEmitter<ItemChanges<T>>();
 
     // 占位符条目改变
     @Output() readonly placeholderItemsChange = new EventEmitter<ItemChanges<T>>();
-
-    // 条目发生动态高度变化
-    @Output() readonly observedItemsChanges = new EventEmitter();
 
     // 当前所有加载的条目
     viewportItems: T[];
@@ -193,11 +197,15 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         return v[ VirtualScrollComponent.ID_ATTR + VirtualScrollComponent.count ];
     }
 
-    mergeHeightChanges() {
-        this.heightChangeSubject.next();
+    mergeHeightChanges(item: T) {
+        this.heightChangeSubject.next(item);
     }
 
-    scrollTo(item: number | T, options?: ScrollConfig) {
+    scrollToIndex(index: number, options?: ScrollConfig) {
+        this.scrollToItem(this.items[ index ], options);
+    }
+
+    scrollToItem(item: T, options?: ScrollConfig) {
         options = Object.assign(new ScrollConfig(), options);
 
         if (options.pauseListeners) {
@@ -213,9 +221,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         let curScrollTop = getScrollTop(context);
         let offsetY = 0;
 
-        if (typeof item === 'number' && item > 0) {
-            offsetY = this.items[ item - 1 ][ this.internalAttrs.accHeight ];
-        } else if (item[ this.internalAttrs.index ] > 0) {
+        if (item[ this.internalAttrs.index ] > 0) {
             offsetY = this.items[ item[ this.internalAttrs.index ] - 1 ][ this.internalAttrs.accHeight ];
         }
 
@@ -269,23 +275,34 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         if (options && options.delay) {
             setTimeout(() => this.refresh(layoutChanged, { ...options, delay: 0 }), options.delay);
         } else {
+            // 发生了插件无法获知的布局变化
             if (layoutChanged) {
-                // 发生了插件无法获知的布局变化，读取原生 DOM 高度
-                let items = options && options.changedItems ? [].concat(options.changedItems) : null;
-                this.refreshLayout(items);
+                this.refreshLayout(options ? options.changedItems : null);
             }
 
-            this.cacheScrollParams();
-            this.refreshPlaceholders();
-            this.refreshVisibles();
+            // 如指定只刷新布局，将不刷新可视条目和占位符条目
+            if (!(options && options.onlyRefreshLayout)) {
+                this.cacheScrollParams();
+                this.refreshPlaceholders();
+                this.refreshVisibles();
+            }
         }
     }
 
-    private refreshLayout(changedItems?: T[]) {
+    private refreshLayout(changedItems?: RefreshItemsConfig<T>[]) {
         if (Array.isArray(this.items) && this.items.length && this.totalHeight) {
             let height = this.items.reduce((prev, cur, index) => {
-                if (changedItems && changedItems.indexOf(cur) >= 0) {
-                    cur[ this.internalAttrs.dynamicHeight ] = this.getNativeHeight(cur);
+                let needRefreshItem = (changedItems || []).find(rec => rec.item === cur);
+                if (needRefreshItem) {
+                    if (needRefreshItem.height) {
+                        // 高度由外部指定，可加快依赖布局刷新的操作(比如滚动)
+                        cur[ this.internalAttrs.dynamicHeight ] =
+                            Math.max(needRefreshItem.height, cur[ this.internalAttrs.height ]);
+                    } else {
+                        // 读取原生高度，但可能元素正处于高度变化中，此时读取的高度不一定是最终值
+                        cur[ this.internalAttrs.dynamicHeight ] =
+                            Math.max(this.getNativeHeight(cur), cur[ this.internalAttrs.height ]);
+                    }
                 }
 
                 if (typeof this.itemHeight === 'number') {
@@ -296,13 +313,12 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 } else if (typeof this.itemHeight === 'function') {
                     cur[ this.internalAttrs.height ] = this.itemHeight(cur as T) + this.itemGap;
                 } else {
-                    throw Error('No input attribute itemHeight or data item attribute itemHeight provided');
+                    throw Error('No input attribute itemHeight provided');
                 }
 
                 cur[ this.internalAttrs.accHeight ] = prev
                     + (cur[ this.internalAttrs.dynamicHeight ] || cur[ this.internalAttrs.height ]);
                 cur[ this.internalAttrs.index ] = index;
-                cur[ this.internalAttrs.visible ] = false;
                 cur[ this.internalAttrs.context ] = this.createItemRenderContext(cur);
 
                 if (!cur[ this.internalAttrs.id ]) {
@@ -323,6 +339,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 let viewportInfo = this.createViewportInfo(RefreshType.VISIBLE);
 
                 this.zone.run(() => {
+                    this.items.forEach(item => item[ this.internalAttrs.visible ] = false);
+
                     this.items
                         .slice(viewportInfo.startIndex, viewportInfo.endIndex + 1)
                         .forEach(item => item[ this.internalAttrs.visible ] = true);
@@ -462,34 +480,52 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         const scrollScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
         this.subscription.add(
-            merge(
-                fromEvent(window, 'resize'),
-                fromEvent(this.windowScroll ? window : this.ele, 'scroll').pipe(
+            fromEvent(window, 'resize')
+                .pipe(debounceTime(this.debounceTime))
+                .subscribe(() => {
+                    // 改变窗口大小时，可能发生布局变化且不能被自动检测到，对可视条目读取原生高度
+                    if (this.observeChanges && this.viewportItems) {
+                        let changed = false;
+                        this.viewportItems
+                            .filter(item => this.itemRender ? item[ this.internalAttrs.visible ] : true)
+                            .forEach(item => {
+                                item[ this.internalAttrs.dynamicHeight ] = this.getNativeHeight(item);
+
+                                if (!changed) {
+                                    changed = item[ this.internalAttrs.height ]
+                                        !== item[ this.internalAttrs.dynamicHeight ];
+                                }
+                            });
+                        this.refresh(changed);
+                    }
+                })
+        );
+
+        this.subscription.add(
+            fromEvent(this.windowScroll ? window : this.ele, 'scroll')
+                .pipe(
                     auditTime(this.auditTime, scrollScheduler),
                     map(() => {
                         if (!this.manualScrolling) {
                             this.cacheScrollParams();
                             this.refreshPlaceholders();
                         }
-                    })
+                    }),
+                    debounceTime(this.debounceTime)
                 )
-            ).pipe(debounceTime(this.debounceTime))
-             .subscribe(() => {
-                 if (!this.manualScrolling) {
-                     this.refreshVisibles();
-                 }
-             })
+                .subscribe(() => {
+                    if (!this.manualScrolling) {
+                        this.refreshVisibles();
+                    }
+                })
         );
 
         // 合并多个条目高度变化事件，减少刷新次数
         this.subscription.add(
             this.heightChangeSubject
                 .asObservable()
-                .pipe(debounceTime(this.observeIntervalTime))
-                .subscribe(() => {
-                    this.refresh();
-                    this.observedItemsChanges.emit();
-                })
+                .pipe(debounceTime(this.observeIntervalTime * 2.5))
+                .subscribe(() => this.refresh())
         );
     }
 

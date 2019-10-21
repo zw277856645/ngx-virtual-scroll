@@ -50,9 +50,18 @@ export class ScrollConfig {
 
 export class RefreshConfig<T> {
 
-    changedItems?: T | T[];
+    changedItems?: RefreshItemsConfig<T>[];
 
     delay?: number;
+
+    onlyRefreshLayout?: boolean;
+}
+
+export class RefreshItemsConfig<T> {
+
+    item: T;
+
+    height?: number;
 }
 
 export enum ScrollDirection {

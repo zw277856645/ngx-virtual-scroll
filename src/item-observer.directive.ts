@@ -1,18 +1,21 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnDestroy, Output, Renderer2 } from '@angular/core';
+import {
+    AfterViewInit, Directive, DoCheck, ElementRef, EventEmitter, Input, OnDestroy, Output, Renderer2
+} from '@angular/core';
 import { VirtualScrollComponent } from './virtual-scroll.component';
-import { Subject, Subscription, timer } from 'rxjs';
+import { of, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, first, map, pairwise, skipWhile, switchMap, switchMapTo, take } from 'rxjs/operators';
 import { ItemInternalAttrs } from './models';
 
 @Directive({
     selector: '[itemObserver]'
 })
-export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit {
+export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit, DoCheck {
 
     @Input() item: T;
 
-    @Output() heightChanged = new EventEmitter();
+    @Output() heightChanged = new EventEmitter<T>();
 
+    private lastHeight: number;
     private internalAttrs: ItemInternalAttrs;
     private mutationObserver: MutationObserver;
     private subject = new Subject();
@@ -30,23 +33,31 @@ export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit {
             this.subject
                 .asObservable()
                 .pipe(
-                    debounceTime(this.virtualScroll.observeIntervalTime),
-                    switchMapTo(
-                        timer(0, this.virtualScroll.observeIntervalTime).pipe(
-                            map(() => this.ele.offsetHeight),
-                            pairwise(),
-                            skipWhile(heights => heights[ 0 ] !== heights[ 1 ]),
-                            first(),
-                            // 首次等到高度固定后继续以一个较长时间间隔检测高度，防止因卡顿导致高度读取不准确
-                            switchMap(([ height ]) => {
-                                return timer(0, this.virtualScroll.observeIntervalTime * 3).pipe(
-                                    map(i => i === 0 ? height : this.ele.offsetHeight),
-                                    take(5)
-                                );
-                            }),
-                            map(height => Math.max(this.item[ this.internalAttrs.height ], height))
-                        )
-                    )
+                    switchMap(() => {
+                        if (this.lastHeight > 0) {
+                            return of(this.lastHeight);
+                        } else {
+                            return of(null).pipe(
+                                debounceTime(this.virtualScroll.observeIntervalTime),
+                                switchMapTo(
+                                    timer(0, this.virtualScroll.observeIntervalTime).pipe(
+                                        map(() => this.ele.offsetHeight),
+                                        pairwise(),
+                                        skipWhile(heights => heights[ 0 ] !== heights[ 1 ]),
+                                        first(),
+                                        switchMap(([ height ]) => {
+                                            // 首次等到高度固定后继续以一个较长时间间隔检测高度，防止因卡顿导致高度读取不准确
+                                            return timer(0, this.virtualScroll.observeIntervalTime * 3).pipe(
+                                                map(i => i === 0 ? height : this.ele.offsetHeight),
+                                                take(5)
+                                            );
+                                        })
+                                    )
+                                )
+                            );
+                        }
+                    }),
+                    map(height => Math.max(this.item[ this.internalAttrs.height ], height))
                 )
                 .subscribe(offsetHeight => {
                     let dynamicHeight = this.item[ this.internalAttrs.dynamicHeight ];
@@ -55,8 +66,8 @@ export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit {
                     if ((!dynamicHeight && height !== offsetHeight)
                         || (dynamicHeight && dynamicHeight !== offsetHeight)) {
                         this.item[ this.internalAttrs.dynamicHeight ] = offsetHeight;
-                        this.refreshLayout();
-                        this.heightChanged.emit();
+                        this.virtualScroll.refresh(true, { onlyRefreshLayout: true });
+                        this.heightChanged.emit(this.item);
                     }
                 })
         );
@@ -72,25 +83,20 @@ export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit {
         this.mutationObserver.observe(this.ele, { childList: true, subtree: true });
     }
 
+    ngDoCheck() {
+        let height = this.virtualScroll.dynamicHeight(this.item);
+        if (height !== this.lastHeight) {
+            this.lastHeight = height;
+            this.subject.next();
+        }
+    }
+
     ngOnDestroy() {
         if (this.mutationObserver) {
             this.mutationObserver.disconnect();
         }
 
         this.subscription.unsubscribe();
-    }
-
-    private refreshLayout() {
-        if (this.virtualScroll.items.length && this.virtualScroll.totalHeight) {
-            let height = this.virtualScroll.items.reduce((prev, cur) => {
-                cur[ this.internalAttrs.accHeight ] = prev
-                    + (cur[ this.internalAttrs.dynamicHeight ] || cur[ this.internalAttrs.height ]);
-
-                return cur[ this.internalAttrs.accHeight ];
-            }, 0);
-
-            this.renderer.setStyle(this.virtualScroll.totalHeight.nativeElement, 'height', height + 'px');
-        }
     }
 
 }
