@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VirtualScrollComponent } from './virtual-scroll.component';
-import { ItemObserverDirective } from './item-observer.directive';
+import { VisibleObserverDirective } from './visible-observer.directive';
+import { PlaceholderObserverDirective } from './placeholder-observer.directive';
 
 @NgModule({
     imports: [
@@ -9,7 +10,8 @@ import { ItemObserverDirective } from './item-observer.directive';
     ],
     declarations: [
         VirtualScrollComponent,
-        ItemObserverDirective
+        VisibleObserverDirective,
+        PlaceholderObserverDirective
     ],
     exports: [
         VirtualScrollComponent

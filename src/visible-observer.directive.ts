@@ -7,9 +7,9 @@ import { debounceTime, first, map, pairwise, skipWhile, switchMap, switchMapTo, 
 import { ItemInternalAttrs } from './models';
 
 @Directive({
-    selector: '[itemObserver]'
+    selector: '[visibleObserver]'
 })
-export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit, DoCheck {
+export class VisibleObserverDirective<T> implements OnDestroy, AfterViewInit, DoCheck {
 
     @Input() item: T;
 
@@ -35,7 +35,7 @@ export class ItemObserverDirective<T> implements OnDestroy, AfterViewInit, DoChe
                 .pipe(
                     switchMap(() => {
                         if (this.lastHeight > 0) {
-                            return of(this.lastHeight);
+                            return of(this.lastHeight + this.virtualScroll.verticalGap);
                         } else {
                             return of(null).pipe(
                                 debounceTime(this.virtualScroll.observeIntervalTime),

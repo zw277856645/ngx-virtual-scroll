@@ -15,26 +15,43 @@
 
 <div class="items-container" #itemsContainer>
   <ng-container *ngFor="let item of viewportItems;trackBy:trackByItems">
-    <!-- 真实条目 & 支持动态高度 -->
-    <ng-container
-      *ngIf="observeChanges && (itemRender ? item[internalAttrs.visible] : true); else placeholderFinalTemplate">
-      <div class="item-wrapper real"
-           [id]="item[internalAttrs.id]"
-           [style.min-height.px]="item[internalAttrs.height]"
-           @stopChildrenAnimations>
-        <div itemObserver
-             [item]="item"
+    <!-- 支持动态高度 -->
+    <ng-container *ngIf="observeChanges">
+      <!-- 真实条目 -->
+      <ng-container *ngIf="itemRender ? item[internalAttrs.visible] : true; else dynamicPlaceholderTemplate">
+        <div class="item-wrapper real"
+             [id]="item[internalAttrs.id]"
+             [style.min-height.px]="item[internalAttrs.height]"
+             @stopChildrenAnimations>
+          <div [style.padding-top.px]="itemGap / 2"
+               [style.padding-bottom.px]="itemGap / 2"
+               visibleObserver
+               [item]="item"
+               (heightChanged)="mergeHeightChanges($event)">
+            <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"
+                         [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- 占位符条目 -->
+      <ng-template #dynamicPlaceholderTemplate>
+        <div class="item-wrapper"
+             [id]="item[internalAttrs.id]"
+             [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
              [style.padding-top.px]="itemGap / 2"
              [style.padding-bottom.px]="itemGap / 2"
-             (heightChanged)="mergeHeightChanges($event)">
-          <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"
-                       [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+             placeholderObserver
+             [item]="item">
+          <ng-template
+            [ngTemplateOutlet]="placeholderRender"
+            [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
         </div>
-      </div>
+      </ng-template>
     </ng-container>
 
-    <!-- 其他 -->
-    <ng-template #placeholderFinalTemplate>
+    <!-- 不支持动态高度 -->
+    <ng-container *ngIf="!observeChanges">
       <div class="item-wrapper"
            [id]="item[internalAttrs.id]"
            [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
@@ -44,6 +61,6 @@
           [ngTemplateOutlet]="item[internalAttrs.visible] ? (itemRender || placeholderRender) : placeholderRender"
           [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
       </div>
-    </ng-template>
+    </ng-container>
   </ng-container>
 </div>

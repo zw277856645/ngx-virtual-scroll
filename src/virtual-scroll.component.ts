@@ -67,17 +67,20 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     @Input() itemHeight: number | ((item: T) => number);
 
     // 条目之间间隙
-    @Input() @InputNumber() itemGap: number = 0;
+    // 当为多行模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
+    @Input() @InputNumber() itemGap: number | { horizontal: number; vertical: number } = 0;
 
     // 滚动容器最大高度，仅当非 window 滚动时有效(windowScroll = false)
     // PS：对于非 window 滚动，必须有容器高度，也可不设定此参数，而在样式中设定
     @Input() @InputNumber() containerMaxHeight: number;
 
     // 刷新占位符条目间隔(ms)
-    @Input() @InputNumber() auditTime: number = 100;
+    @Input() @InputNumber() auditTime: number = 0;
 
     // 刷新可视条目间隔(ms)
     @Input() @InputNumber() debounceTime: number = 300;
+
+    /* -------- 动态高度 -------- */
 
     // 是否监测条目 DOM 变化，设置 true 条目高度变化后将自动刷新
     @Input() @InputBoolean() observeChanges: boolean;
@@ -88,8 +91,18 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 条目动态高度判断逻辑，返回大于0的数值代表符合条件，其他都为条件不成立，插件将自动读取原生 DOM 属性
     // 提供该配置可加快布局刷新，因为插件自动读取需要经历比较多的轮回才能确定高度稳定，有一定的时间浪费
     // 动态高度可能有多种不同的场景，只需处理高度固定的场景，其他场景返回空即可
-    // 只在 observeChanges = true 时有效
-    @Input() dynamicHeight: (item: T) => number = () => null;
+    @Input() dynamicHeight: (item: T) => number = () => undefined;
+
+    /* -------- 多行模式 -------- */
+
+    // 是否是多行模式(每行显示多个条目)
+    // 注意：多行模式不支持动态高度
+    @Input() @InputBoolean() multiline: boolean;
+
+    // 条目宽度，只有多行模式时需要设置，当各条目宽度不同时，使用回调函数形式
+    // 注意不要给条目设置 margin-left 和 margin-right，使用 itemGap 设置条目的间隙
+    // 与 itemHeight 不同的是，可设置百分比字符串
+    @Input() itemWidth: number | string | ((item: T) => number | string);
 
     // 可视条目改变
     @Output() readonly visibleItemsChange = new EventEmitter<ItemChanges<T>>();
@@ -201,11 +214,19 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         this.heightChangeSubject.next(item);
     }
 
-    scrollToIndex(index: number, options?: ScrollConfig) {
-        this.scrollToItem(this.items[ index ], options);
+    get scrollPosition() {
+        return this.lastOffsetY;
     }
 
-    scrollToItem(item: T, options?: ScrollConfig) {
+    get horizontalGap() {
+        return typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.horizontal;
+    }
+
+    get verticalGap() {
+        return typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.vertical;
+    }
+
+    scrollToPosition(position: number, options?: ScrollConfig) {
         options = Object.assign(new ScrollConfig(), options);
 
         if (options.pauseListeners) {
@@ -219,11 +240,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
         let context = this.windowScroll ? window : this.ele;
         let curScrollTop = getScrollTop(context);
-        let offsetY = 0;
-
-        if (item[ this.internalAttrs.index ] > 0) {
-            offsetY = this.items[ item[ this.internalAttrs.index ] - 1 ][ this.internalAttrs.accHeight ];
-        }
+        let offsetY = position;
 
         if (options.offsetTop) {
             offsetY += options.offsetTop;
@@ -271,6 +288,19 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         }
     }
 
+    scrollToIndex(index: number, options?: ScrollConfig) {
+        this.scrollToItem(this.items[ index ], options);
+    }
+
+    scrollToItem(item: T, options?: ScrollConfig) {
+        let offsetY = 0;
+        if (item[ this.internalAttrs.index ] > 0) {
+            offsetY = this.items[ item[ this.internalAttrs.index ] - 1 ][ this.internalAttrs.accHeight ];
+        }
+
+        this.scrollToPosition(offsetY, options);
+    }
+
     refresh(layoutChanged?: boolean, options?: RefreshConfig<T>) {
         if (options && options.delay) {
             setTimeout(() => this.refresh(layoutChanged, { ...options, delay: 0 }), options.delay);
@@ -297,7 +327,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     if (needRefreshItem.height) {
                         // 高度由外部指定，可加快依赖布局刷新的操作(比如滚动)
                         cur[ this.internalAttrs.dynamicHeight ] =
-                            Math.max(needRefreshItem.height, cur[ this.internalAttrs.height ]);
+                            Math.max(needRefreshItem.height + this.verticalGap, cur[ this.internalAttrs.height ]);
                     } else {
                         // 读取原生高度，但可能元素正处于高度变化中，此时读取的高度不一定是最终值
                         cur[ this.internalAttrs.dynamicHeight ] =
@@ -306,14 +336,14 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 }
 
                 if (typeof this.itemHeight === 'number') {
-                    cur[ this.internalAttrs.height ] = this.itemHeight + this.itemGap;
+                    cur[ this.internalAttrs.height ] = this.itemHeight + this.verticalGap;
                 } else if (typeof this.itemHeight === 'string' && !isNaN(parseFloat(this.itemHeight))) {
                     this.itemHeight = parseFloat(this.itemHeight);
-                    cur[ this.internalAttrs.height ] = this.itemHeight + this.itemGap;
+                    cur[ this.internalAttrs.height ] = this.itemHeight + this.verticalGap;
                 } else if (typeof this.itemHeight === 'function') {
-                    cur[ this.internalAttrs.height ] = this.itemHeight(cur as T) + this.itemGap;
+                    cur[ this.internalAttrs.height ] = this.itemHeight(cur as T) + this.verticalGap;
                 } else {
-                    throw Error('No input attribute itemHeight provided');
+                    throw Error('No available itemHeight provided');
                 }
 
                 cur[ this.internalAttrs.accHeight ] = prev
