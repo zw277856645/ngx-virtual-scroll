@@ -1,4 +1,4 @@
 # ngx-virtual-scroll
 
-> angular 虚拟滚动
+> angular 虚拟滚动插件
 

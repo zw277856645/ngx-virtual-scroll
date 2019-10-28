@@ -45,7 +45,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     // 滚动到的条目不会立即显示，因为用户可能继续滚动，先使用性能代价较小的占位元素替代
     // 如果不希望出现占位符条目，可直接设置本参数为真实渲染模板
-    @Input() @ViewChild('placeholderTemplate', { static: true }) placeholderRender: TemplateRef<{ $implicit: number }>;
+    @Input() @ViewChild('placeholderTemplate', { static: true }) placeholderRender: TemplateRef<NgForOfContext<T>>;
 
     // 真实条目渲染模板
     // 不提供则使用 placeholderRender 替代
@@ -56,9 +56,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 有效值范围 n ≥ 1.5
     @Input() @InputNumber() visiblePages: number = 3;
 
-    // 占位符条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = placeholderPages / 2
+    // 占位符条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = (placeholderPages - visiblePages) / 2
     // 根据用户滚动方向，「上/下屏幕外占位符数量」会自动调节，滚动方向的缓存数量会加大
-    // 超出占位符数量的条目不会加载。优用户体验用，防止滚动过快时出现空白。占位符消耗性能较小，可适当调大本参数优化滚动体验
+    // 超出占位符数量的条目不会加载。占位符消耗性能较小，可适当调大本参数优化滚动体验
     // visiblePages ≤ placeholderPages，「可视条目」为「占位符条目」中处于可视窗口内的条目
     // 不设置或值小于 visiblePages，修正值为 visiblePages
     @Input() @InputNumber() placeholderPages: number = 0;

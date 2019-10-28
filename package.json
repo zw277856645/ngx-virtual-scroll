@@ -12,8 +12,14 @@
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "ngPackage": {
     "lib": {
-      "entryFile": "public_api.ts"
-    }
+      "entryFile": "public_api.ts",
+      "cssUrl": "inline"
+    },
+    "whitelistedNonPeerDependencies": [
+      "@tweenjs/tween.js",
+      "@types/tween.js",
+      "cmjs-lib"
+    ]
   },
   "repository": {
     "type": "git",
@@ -31,6 +37,7 @@
   "peerDependencies": {
     "@angular/core": "^8.1.2",
     "@angular/common": "^8.1.2",
+    "@angular/animations": "^8.1.2",
     "zone.js": "^0.9.1",
     "rxjs": "^6.5.1"
   },
@@ -42,6 +49,7 @@
   "devDependencies": {
     "@angular/common": "8.1.2",
     "@angular/core": "8.1.2",
+    "@angular/animations": "8.1.2",
     "@angular/platform-browser": "8.1.2",
     "@angular/platform-browser-dynamic": "8.1.2",
     "@angular/compiler-cli": "8.1.2",
@@ -49,18 +57,12 @@
     "@types/node": "10.14.5",
     "zone.js": "0.9.1",
     "rxjs": "6.5.1",
-    "angular-router-loader": "0.8.5",
-    "angular2-template-loader": "0.6.2",
-    "ts-loader": "5.4.4",
     "ng-packagr": "5.1.0",
     "ajv": "6.9.1",
     "rimraf": "2.6.1",
     "rxjs-tslint": "0.1.7",
     "tslint": "5.11.0",
     "codelyzer": "5.1.0",
-    "typescript": "3.4.5",
-    "webpack": "4.19.1",
-    "webpack-cli": "3.1.0",
-    "webpack-dev-server": "3.1.4"
+    "typescript": "3.4.5"
   }
 }
