@@ -1,6 +1,6 @@
 import {
     AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, Renderer2,
-    SimpleChanges, TemplateRef, ViewChild
+    SimpleChanges, TemplateRef, TrackByFunction, ViewChild
 } from '@angular/core';
 import { getScrollTop, InputBoolean, InputNumber, setScrollTop, uuid } from 'cmjs-lib';
 import { animationFrameScheduler, asapScheduler, fromEvent, Subject, Subscription } from 'rxjs';
@@ -36,6 +36,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 无法识别排序导致的数组变化，请使用 arr = [].concat(arr) 改变数组引用
     @Input() items: T[];
 
+    // 不提供则使用自动生成的id为返回值
+    // 推荐定时刷新的列表提供该配置，因为插件检测到的数据是变化了的，会重新生成id
+    @Input() trackBy: TrackByFunction<T>;
+
     // items 为空时显示的模板
     @Input() emptyRender: TemplateRef<any>;
 
@@ -64,10 +68,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     // 条目高度，必须设置。不需要每个条目高度都相同，当各条目高度不同时，使用回调函数形式
     // 注意不要给条目设置 margin-top 和 margin-bottom，使用 itemGap 设置条目的间隙
-    @Input() itemHeight: number | ((item: T) => number);
+    @Input() itemHeight: number | string | ((item: T, index: number) => number);
 
     // 条目之间间隙
-    // 当为多行模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
+    // 当为多列模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
     @Input() @InputNumber() itemGap: number | { horizontal: number; vertical: number } = 0;
 
     // 滚动容器最大高度，仅当非 window 滚动时有效(windowScroll = false)
@@ -93,16 +97,16 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 动态高度可能有多种不同的场景，只需处理高度固定的场景，其他场景返回空即可
     @Input() dynamicHeight: (item: T) => number = () => undefined;
 
-    /* -------- 多行模式 -------- */
+    /* -------- 多列模式 -------- */
 
-    // 是否是多行模式(每行显示多个条目)
-    // 注意：多行模式不支持动态高度
-    @Input() @InputBoolean() multiline: boolean;
+    // 是否是多列模式(每行显示多个条目)
+    // 注意：多列模式不支持动态高度
+    @Input() @InputBoolean() multiseriate: boolean;
 
-    // 条目宽度，只有多行模式时需要设置，当各条目宽度不同时，使用回调函数形式
+    // 条目宽度，多列模式时必须设置，当各条目宽度不同时，使用回调函数形式
     // 注意不要给条目设置 margin-left 和 margin-right，使用 itemGap 设置条目的间隙
     // 与 itemHeight 不同的是，可设置百分比字符串
-    @Input() itemWidth: number | string | ((item: T) => number | string);
+    @Input() itemWidth: number | string | ((item: T, index: number) => number | string);
 
     // 可视条目改变
     @Output() readonly visibleItemsChange = new EventEmitter<ItemChanges<T>>();
@@ -140,6 +144,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     private static readonly ID_ATTR = '_vs_id_';
     private static readonly VISIBLE_ATTR = '_vs_visible_';
     private static readonly CONTEXT_ATTR = '_vs_context_';
+    private static readonly WIDTH_ATTR = '_vs_width_';
 
     constructor(private eleRef: ElementRef,
                 private renderer: Renderer2,
@@ -168,31 +173,44 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             visible: VirtualScrollComponent.VISIBLE_ATTR + VirtualScrollComponent.count,
 
             // 条目关联的 ngFor 上下文
-            context: VirtualScrollComponent.CONTEXT_ATTR + VirtualScrollComponent.count
-        };
-    }
+            context: VirtualScrollComponent.CONTEXT_ATTR + VirtualScrollComponent.count,
 
-    ngOnInit() {
-        this.fixPageParams();
-        this.setHostStyles();
+            // 条目宽度(包括了条目间隙)
+            width: VirtualScrollComponent.WIDTH_ATTR + +VirtualScrollComponent.count
+        };
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if ((changes.items && !changes.items.firstChange)
             || (changes.itemHeight && !changes.itemHeight.firstChange)
-            || (changes.itemGap && !changes.itemGap.firstChange)) {
+            || (changes.itemGap && !changes.itemGap.firstChange)
+            || (changes.multiseriate && !changes.multiseriate.firstChange)
+            || (changes.itemWidth && !changes.itemWidth.firstChange)) {
             this.lastViewportInfo = null;
             this.lastVisibleViewportInfo = null;
             this.refresh(true);
         }
+
         if (changes.containerMaxHeight && !changes.containerMaxHeight.firstChange) {
             this.setHostStyles();
         }
+
         if ((changes.visiblePages && !changes.visiblePages.firstChange)
             || (changes.placeholderPages && !changes.placeholderPages.firstChange)
             || (changes.adjustFactor && !changes.adjustFactor.firstChange)) {
             this.fixPageParams();
         }
+
+        if ((changes.multiseriate && !changes.multiseriate.firstChange)
+            || (changes.observeChanges && !changes.observeChanges.firstChange)) {
+            this.checkConflictParams();
+        }
+    }
+
+    ngOnInit() {
+        this.checkConflictParams();
+        this.fixPageParams();
+        this.setHostStyles();
     }
 
     ngAfterViewInit() {
@@ -201,17 +219,25 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
-    }
-
-    trackByItems(i: number, v: T) {
-        return v[ VirtualScrollComponent.ID_ATTR + VirtualScrollComponent.count ];
+        this.subscription.unsubscribe();
     }
 
     mergeHeightChanges(item: T) {
         this.heightChangeSubject.next(item);
+    }
+
+    getItemContext(item: T) {
+        return { ...item[ this.internalAttrs.context ], $implicit: item };
+    }
+
+    get trackByItems() {
+        return (i: number, v: T) => {
+            if (typeof this.trackBy === 'function') {
+                return this.trackBy(i, v);
+            } else {
+                return v[ VirtualScrollComponent.ID_ATTR + VirtualScrollComponent.count ];
+            }
+        };
     }
 
     get scrollPosition() {
@@ -219,7 +245,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     get horizontalGap() {
-        return typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.horizontal;
+        return this.multiseriate ? (typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.horizontal) : 0;
     }
 
     get verticalGap() {
@@ -247,6 +273,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         }
 
         if (curScrollTop === offsetY) {
+            this.refresh();
             options.onComplete();
             this.manualScrolling = false;
         } else if (options.animation) {
@@ -321,7 +348,15 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     private refreshLayout(changedItems?: RefreshItemsConfig<T>[]) {
         if (Array.isArray(this.items) && this.items.length && this.totalHeight) {
-            let height = this.items.reduce((prev, cur, index) => {
+            let scrollWidth = this.getContainerScrollWidth();
+            let [ height ] = this.items.reduce((prev, cur, index) => {
+                if (!cur[ this.internalAttrs.id ]) {
+                    cur[ this.internalAttrs.id ] = 'id-' + uuid(8);
+                }
+
+                cur[ this.internalAttrs.index ] = index;
+                cur[ this.internalAttrs.context ] = this.createItemRenderContext(index);
+
                 let needRefreshItem = (changedItems || []).find(rec => rec.item === cur);
                 if (needRefreshItem) {
                     if (needRefreshItem.height) {
@@ -337,53 +372,55 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
                 if (typeof this.itemHeight === 'number') {
                     cur[ this.internalAttrs.height ] = this.itemHeight + this.verticalGap;
-                } else if (typeof this.itemHeight === 'string' && !isNaN(parseFloat(this.itemHeight))) {
-                    this.itemHeight = parseFloat(this.itemHeight);
+                } else if (typeof this.itemHeight === 'string' && !isNaN(parseInt(this.itemHeight))) {
+                    this.itemHeight = parseInt(this.itemHeight);
                     cur[ this.internalAttrs.height ] = this.itemHeight + this.verticalGap;
                 } else if (typeof this.itemHeight === 'function') {
-                    cur[ this.internalAttrs.height ] = this.itemHeight(cur as T) + this.verticalGap;
+                    cur[ this.internalAttrs.height ] = this.itemHeight(cur as T, index) + this.verticalGap;
                 } else {
-                    throw Error('No available itemHeight provided');
+                    throw Error('No available itemHeight config provided');
                 }
 
-                cur[ this.internalAttrs.accHeight ] = prev
-                    + (cur[ this.internalAttrs.dynamicHeight ] || cur[ this.internalAttrs.height ]);
-                cur[ this.internalAttrs.index ] = index;
-                cur[ this.internalAttrs.context ] = this.createItemRenderContext(cur);
-
-                if (!cur[ this.internalAttrs.id ]) {
-                    cur[ this.internalAttrs.id ] = 'id-' + uuid(8);
+                if (this.multiseriate) {
+                    if (typeof this.itemWidth === 'number') {
+                        cur[ this.internalAttrs.width ] = this.itemWidth + this.horizontalGap;
+                    } else if (typeof this.itemWidth === 'string' && !isNaN(parseInt(this.itemWidth))) {
+                        this.itemWidth = this.calcStringWidth(this.itemWidth);
+                        cur[ this.internalAttrs.width ] = this.itemWidth + this.horizontalGap;
+                    } else if (typeof this.itemWidth === 'function') {
+                        cur[ this.internalAttrs.width ] =
+                            this.calcStringWidth(this.itemWidth(cur as T, index)) + this.horizontalGap;
+                    } else {
+                        throw Error('No available itemWidth config provided');
+                    }
                 }
 
-                return cur[ this.internalAttrs.accHeight ];
-            }, 0);
+                if (!this.multiseriate) {
+                    cur[ this.internalAttrs.accHeight ] = prev[ 0 ]
+                        + (cur[ this.internalAttrs.dynamicHeight ] || cur[ this.internalAttrs.height ]);
+
+                    return [ cur[ this.internalAttrs.accHeight ], 0 ];
+                } else {
+                    let accWidth = prev[ 1 ] + cur[ this.internalAttrs.width ];
+
+                    // 当前条目会出现在下一行
+                    if (accWidth > scrollWidth) {
+                        cur[ this.internalAttrs.accHeight ] = prev[ 0 ] + cur[ this.internalAttrs.height ];
+
+                        // 每当换行时累计宽度重新计算
+                        return [ cur[ this.internalAttrs.accHeight ], cur[ this.internalAttrs.width ] ];
+                    }
+                    // 当前条目与前一个元素处于同一行
+                    else {
+                        cur[ this.internalAttrs.accHeight ] = index > 0 ? prev[ 0 ] : cur[ this.internalAttrs.height ];
+
+                        return [ cur[ this.internalAttrs.accHeight ], accWidth ];
+                    }
+                }
+            }, [ 0 /* 累计高度 */, 0 /* 条目所在行的累计宽度 */ ]);
 
             this.renderer.setStyle(this.totalHeight.nativeElement, 'height', height + 'px');
         }
-    }
-
-    private refreshVisibles() {
-        this.zone.runOutsideAngular(() => {
-            if (this.itemRender) {
-                // 计算哪些条目需要显示真实模板
-                let viewportInfo = this.createViewportInfo(RefreshType.VISIBLE);
-
-                this.zone.run(() => {
-                    this.items.forEach(item => item[ this.internalAttrs.visible ] = false);
-
-                    this.items
-                        .slice(viewportInfo.startIndex, viewportInfo.endIndex + 1)
-                        .forEach(item => item[ this.internalAttrs.visible ] = true);
-
-                    if (!this.lastVisibleViewportInfo
-                        || (this.lastVisibleViewportInfo.startIndex !== viewportInfo.startIndex)
-                        || (this.lastVisibleViewportInfo.endIndex !== viewportInfo.endIndex)) {
-                        this.visibleItemsChange.emit(this.createItemsChange(viewportInfo, RefreshType.VISIBLE));
-                        this.lastVisibleViewportInfo = viewportInfo;
-                    }
-                });
-            }
-        });
     }
 
     private refreshPlaceholders() {
@@ -421,6 +458,44 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         });
     }
 
+    private refreshVisibles() {
+        this.zone.runOutsideAngular(() => {
+            if (this.itemRender) {
+                // 计算哪些条目需要显示真实模板
+                let viewportInfo = this.createViewportInfo(RefreshType.VISIBLE);
+
+                this.zone.run(() => {
+                    this.items.forEach(item => item[ this.internalAttrs.visible ] = false);
+
+                    this.items
+                        .slice(viewportInfo.startIndex, viewportInfo.endIndex + 1)
+                        .forEach(item => item[ this.internalAttrs.visible ] = true);
+
+                    if (!this.lastVisibleViewportInfo
+                        || (this.lastVisibleViewportInfo.startIndex !== viewportInfo.startIndex)
+                        || (this.lastVisibleViewportInfo.endIndex !== viewportInfo.endIndex)) {
+                        this.visibleItemsChange.emit(this.createItemsChange(viewportInfo, RefreshType.VISIBLE));
+                        this.lastVisibleViewportInfo = viewportInfo;
+                    }
+                });
+            }
+        });
+    }
+
+    private calcStringWidth(width: string | number) {
+        if (typeof width === 'string') {
+            let scrollWidth = this.getContainerScrollWidth();
+
+            return width.endsWith('%') ? parseInt(width) / 100 * scrollWidth : parseInt(width);
+        } else {
+            return width;
+        }
+    }
+
+    private createItemRenderContext(index: number) {
+        return new NgForOfContext(null, null, index, this.items.length);
+    }
+
     private createViewportInfo(type: RefreshType) {
         let scrollHeight = this.windowScroll ? this.body.scrollHeight : this.ele.scrollHeight;
         let clientHeight = this.windowScroll ? this.body.clientHeight : this.ele.clientHeight;
@@ -440,6 +515,17 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         let maxArea = this.lastOffsetY + middleArea + bottomArea;
         let firstItem = this.items.find(item => item[ this.internalAttrs.accHeight ] >= minArea);
         let lastItem = this.items.find(item => item[ this.internalAttrs.accHeight ] >= maxArea);
+
+        // 多列模式底部的条目应该取该行最后一个
+        if (this.multiseriate && lastItem) {
+            for (let item of this.items.slice(lastItem[ this.internalAttrs.index ] + 1)) {
+                if (item[ this.internalAttrs.accHeight ] === lastItem[ this.internalAttrs.accHeight ]) {
+                    lastItem = item;
+                } else {
+                    break;
+                }
+            }
+        }
 
         let viewportInfo = new ViewportInfo<T>();
         viewportInfo.startIndex = firstItem ? firstItem[ this.internalAttrs.index ] : 0;
@@ -502,10 +588,6 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         return ele ? (ele as HTMLElement).offsetHeight : 0;
     }
 
-    private createItemRenderContext(item: T) {
-        return new NgForOfContext(item, null, item[ this.internalAttrs.index ], this.items.length);
-    }
-
     private bindEvents() {
         const scrollScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
@@ -516,10 +598,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     // 改变窗口大小时，可能发生布局变化且不能被自动检测到，对可视条目读取原生高度
                     if (this.observeChanges && this.viewportItems) {
                         let changed = false;
-                        this.viewportItems
-                            .filter(item => this.itemRender ? item[ this.internalAttrs.visible ] : true)
+                        this.viewportItems.filter(item => this.itemRender ? item[ this.internalAttrs.visible ] : true)
                             .forEach(item => {
-                                item[ this.internalAttrs.dynamicHeight ] = this.getNativeHeight(item);
+                                item[ this.internalAttrs.dynamicHeight ] =
+                                    Math.max(this.getNativeHeight(item), item[ this.internalAttrs.height ]);
 
                                 if (!changed) {
                                     changed = item[ this.internalAttrs.height ]
@@ -527,6 +609,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                                 }
                             });
                         this.refresh(changed);
+                    }
+                    // 多列模式下可能每行个数发生变化
+                    else if (this.multiseriate && this.viewportItems) {
+                        this.refresh(true);
                     }
                 })
         );
@@ -583,10 +669,20 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         }
     }
 
+    private getContainerScrollWidth() {
+        return (this.itemsContainer.nativeElement as HTMLElement).scrollWidth - 2;
+    }
+
     private fixPageParams() {
         // 参数容错
         this.visiblePages = Math.max(1.5, this.visiblePages);
         this.placeholderPages = Math.max(this.visiblePages, this.placeholderPages);
         this.adjustFactor = Math.max(0, Math.min(1, this.adjustFactor));
+    }
+
+    private checkConflictParams() {
+        if (this.multiseriate && this.observeChanges) {
+            throw Error('You cannot set both multiseriate and observeChanges to true');
+        }
     }
 }

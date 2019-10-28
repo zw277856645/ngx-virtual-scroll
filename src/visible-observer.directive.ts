@@ -84,9 +84,9 @@ export class VisibleObserverDirective<T> implements OnDestroy, AfterViewInit, Do
     }
 
     ngDoCheck() {
-        let height = this.virtualScroll.dynamicHeight(this.item);
-        if (height !== this.lastHeight) {
-            this.lastHeight = height;
+        let dynamicHeight = this.virtualScroll.dynamicHeight(this.item);
+        if (dynamicHeight !== this.lastHeight) {
+            this.lastHeight = dynamicHeight;
             this.subject.next();
         }
     }

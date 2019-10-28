@@ -13,6 +13,8 @@ export interface ItemInternalAttrs {
     visible: string;
 
     context: string;
+
+    width?: string;
 }
 
 export class ItemChanges<T> {

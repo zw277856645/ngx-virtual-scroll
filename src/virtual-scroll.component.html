@@ -7,7 +7,13 @@
 
 <!-- 空渲染模板 -->
 <ng-container *ngIf="(!items || !items.length) && emptyRender">
-  <ng-template [ngTemplateOutlet]="emptyRender"></ng-template>
+  <div class="empty-wrapper"
+       [style.padding-top.px]="verticalGap / 2"
+       [style.padding-bottom.px]="verticalGap / 2"
+       [style.padding-left.px]="horizontalGap / 2"
+       [style.padding-right.px]="horizontalGap / 2">
+    <ng-template [ngTemplateOutlet]="emptyRender"></ng-template>
+  </div>
 </ng-container>
 
 <!-- 仅用于撑开高度 -->
@@ -15,21 +21,21 @@
 
 <div class="items-container" #itemsContainer>
   <ng-container *ngFor="let item of viewportItems;trackBy:trackByItems">
-    <!-- 支持动态高度 -->
-    <ng-container *ngIf="observeChanges">
+    <!-- 支持动态高度 & 非多列模式 -->
+    <ng-container *ngIf="observeChanges && !multiseriate; else fixedTemplate">
       <!-- 真实条目 -->
       <ng-container *ngIf="itemRender ? item[internalAttrs.visible] : true; else dynamicPlaceholderTemplate">
         <div class="item-wrapper real"
              [id]="item[internalAttrs.id]"
              [style.min-height.px]="item[internalAttrs.height]"
              @stopChildrenAnimations>
-          <div [style.padding-top.px]="itemGap / 2"
-               [style.padding-bottom.px]="itemGap / 2"
+          <div [style.padding-top.px]="verticalGap / 2"
+               [style.padding-bottom.px]="verticalGap / 2"
                visibleObserver
                [item]="item"
                (heightChanged)="mergeHeightChanges($event)">
             <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"
-                         [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+                         [ngTemplateOutletContext]="getItemContext(item)"></ng-template>
           </div>
         </div>
       </ng-container>
@@ -39,28 +45,30 @@
         <div class="item-wrapper"
              [id]="item[internalAttrs.id]"
              [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
-             [style.padding-top.px]="itemGap / 2"
-             [style.padding-bottom.px]="itemGap / 2"
+             [style.padding-top.px]="verticalGap / 2"
+             [style.padding-bottom.px]="verticalGap / 2"
              placeholderObserver
              [item]="item">
-          <ng-template
-            [ngTemplateOutlet]="placeholderRender"
-            [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+          <ng-template [ngTemplateOutlet]="placeholderRender"
+                       [ngTemplateOutletContext]="getItemContext(item)"></ng-template>
         </div>
       </ng-template>
     </ng-container>
 
-    <!-- 不支持动态高度 -->
-    <ng-container *ngIf="!observeChanges">
+    <!-- 不支持动态高度 / 多列模式 -->
+    <ng-template #fixedTemplate>
       <div class="item-wrapper"
            [id]="item[internalAttrs.id]"
            [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"
-           [style.padding-top.px]="itemGap / 2"
-           [style.padding-bottom.px]="itemGap / 2">
+           [style.width]="multiseriate ? (item[internalAttrs.width] + 'px') : '100%'"
+           [style.padding-top.px]="verticalGap / 2"
+           [style.padding-bottom.px]="verticalGap / 2"
+           [style.padding-left.px]="horizontalGap / 2"
+           [style.padding-right.px]="horizontalGap / 2">
         <ng-template
           [ngTemplateOutlet]="item[internalAttrs.visible] ? (itemRender || placeholderRender) : placeholderRender"
-          [ngTemplateOutletContext]="item[internalAttrs.context]"></ng-template>
+          [ngTemplateOutletContext]="getItemContext(item)"></ng-template>
       </div>
-    </ng-container>
+    </ng-template>
   </ng-container>
 </div>
