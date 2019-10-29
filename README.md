@@ -12,12 +12,12 @@ angular 虚拟滚动插件，适用于大数据量列表展示
 - [DEMO](https://zw277856645.gitlab.io/ngx-virtual-scroll/#/demo)
 
 ## 📦 安装
-> npm install ngx-virtual-scroll --save
+> npm install @demacia/ngx-virtual-scroll --save
 
 ## 🔨 使用
 #### 1. 引入module
 ``` js
-import { VirtualScrollModule } from 'ngx-virtual-scroll';
+import { VirtualScrollModule } from '@demacia/ngx-virtual-scroll';
 
 @NgModule({
     imports: [

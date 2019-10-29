@@ -2,7 +2,7 @@ import {
     AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, Renderer2,
     SimpleChanges, TemplateRef, TrackByFunction, ViewChild
 } from '@angular/core';
-import { getScrollTop, InputBoolean, InputNumber, setScrollTop, uuid } from 'cmjs-lib';
+import { getScrollTop, InputBoolean, InputNumber, setScrollTop, uuid } from '@demacia/cmjs-lib';
 import { animationFrameScheduler, asapScheduler, fromEvent, Subject, Subscription } from 'rxjs';
 import { auditTime, debounceTime, map } from 'rxjs/operators';
 import { NgForOfContext } from '@angular/common';

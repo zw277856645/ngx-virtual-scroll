@@ -1,6 +1,6 @@
 window.$docsify = {
     loadSidebar: true,
-    subMaxLevel: 3,
+    subMaxLevel: 4,
     coverpage: true,
     auto2top: true,
     homepage: 'demo.md',
@@ -9,7 +9,7 @@ window.$docsify = {
         DemoBoxAngular.create({
             project: {
                 dependencies: {
-                    "cmjs-lib": "0.7.1"
+                    "@demacia/cmjs-lib": "0.0.1"
                 }
             }
         })

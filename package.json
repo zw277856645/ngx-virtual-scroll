@@ -1,10 +1,10 @@
 {
-  "name": "ngx-virtual-scroll",
-  "version": "0.0.1",
+  "name": "@demacia/ngx-virtual-scroll",
+  "version": "0.0.2",
   "description": "angular big list viewer",
   "scripts": {
     "build": "ng-packagr -p package.json",
-    "publish": "npm publish dist",
+    "publish": "npm publish dist --access public",
     "clean": "rimraf dist",
     "doc": "docsify serve docs --open",
     "lint": "tslint -c tslint.json -p tsconfig.json"
@@ -18,7 +18,7 @@
     "whitelistedNonPeerDependencies": [
       "@tweenjs/tween.js",
       "@types/tween.js",
-      "cmjs-lib"
+      "@demacia/cmjs-lib"
     ]
   },
   "repository": {
@@ -30,6 +30,8 @@
     "ngx",
     "virtual",
     "scroll",
+    "scrolling",
+    "scroller",
     "big list"
   ],
   "author": "wei.zhang",
@@ -44,7 +46,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "~17.2.0",
     "@types/tween.js": "~16.9.0",
-    "cmjs-lib": "~0.7.1"
+    "@demacia/cmjs-lib": "~0.0.1"
   },
   "devDependencies": {
     "@angular/common": "8.1.2",
