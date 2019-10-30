@@ -6,7 +6,7 @@
 </ng-template>
 
 <!-- 空渲染模板 -->
-<ng-container *ngIf="(!items || !items.length) && emptyRender">
+<ng-container *ngIf="(!viewportItems || !viewportItems.length) && emptyRender">
   <div class="empty-wrapper"
        [style.padding-top.px]="verticalGap / 2"
        [style.padding-bottom.px]="verticalGap / 2"

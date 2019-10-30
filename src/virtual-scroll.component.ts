@@ -188,7 +188,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             || (changes.itemWidth && !changes.itemWidth.firstChange)) {
             this.lastViewportInfo = null;
             this.lastVisibleViewportInfo = null;
-            this.refresh(true);
+
+            // 数据变化可能导致容器高度变化，等待 totalHeight 元素将容器高度撑开后再刷新
+            this.refresh(true, { delay: 0 });
         }
 
         if (changes.containerMaxHeight && !changes.containerMaxHeight.firstChange) {
@@ -329,8 +331,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     refresh(layoutChanged?: boolean, options?: RefreshConfig<T>) {
-        if (options && options.delay) {
-            setTimeout(() => this.refresh(layoutChanged, { ...options, delay: 0 }), options.delay);
+        if (options && typeof options.delay === 'number') {
+            setTimeout(() => this.refresh(layoutChanged, { ...options, delay: null }), options.delay);
         } else {
             // 发生了插件无法获知的布局变化
             if (layoutChanged) {
