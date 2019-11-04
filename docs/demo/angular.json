@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "demo": {
+      "root": "",
+      "sourceRoot": "",
+      "projectType": "application",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "styles": [
+              "node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "demo"
+}

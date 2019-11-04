@@ -127,11 +127,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     private lastContainerOffsetY: number = 0;
     private currentTween: TWEEN.Tween;
     private manualScrolling: boolean;
-    private subscription = new Subscription();
+    private subscription: Subscription;
     private heightChangeSubject = new Subject();
 
     private readonly ele: HTMLElement;
-    private readonly body: HTMLElement;
 
     // 插件会在数据项中添加私有属性，计算时需要用到这些属性，当同一套数据用在多个滚动插件中时，属性会冲突。在属性后加上
     // 自增值实现动态唯一属性
@@ -150,7 +149,6 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 private renderer: Renderer2,
                 private zone: NgZone) {
         this.ele = eleRef.nativeElement;
-        this.body = document.body;
 
         VirtualScrollComponent.count++;
         this.internalAttrs = {
@@ -193,14 +191,23 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             this.refresh(true, { delay: 0 });
         }
 
-        if (changes.containerMaxHeight && !changes.containerMaxHeight.firstChange) {
+        if ((changes.auditTime && !changes.auditTime.firstChange)
+            || (changes.debounceTime && !changes.debounceTime.firstChange)
+            || (changes.windowScroll && !changes.windowScroll.firstChange)) {
+            this.bindEvents();
+        }
+
+        if ((changes.containerMaxHeight && !changes.containerMaxHeight.firstChange)
+            || (changes.windowScroll && !changes.windowScroll.firstChange)) {
             this.setHostStyles();
+            this.refresh();
         }
 
         if ((changes.visiblePages && !changes.visiblePages.firstChange)
             || (changes.placeholderPages && !changes.placeholderPages.firstChange)
             || (changes.adjustFactor && !changes.adjustFactor.firstChange)) {
             this.fixPageParams();
+            this.refresh();
         }
 
         if ((changes.multiseriate && !changes.multiseriate.firstChange)
@@ -221,7 +228,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     mergeHeightChanges(item: T) {
@@ -498,9 +507,14 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         return new NgForOfContext(null, null, index, this.items.length);
     }
 
+    private getScrollElement() {
+        return this.windowScroll ? document.scrollingElement || document.documentElement || document.body : this.ele;
+    }
+
     private createViewportInfo(type: RefreshType) {
-        let scrollHeight = this.windowScroll ? this.body.scrollHeight : this.ele.scrollHeight;
-        let clientHeight = this.windowScroll ? this.body.clientHeight : this.ele.clientHeight;
+        let scrollEle = this.getScrollElement();
+        let scrollHeight = scrollEle.scrollHeight;
+        let clientHeight = scrollEle.clientHeight;
 
         // 计算屏幕/容器上、中、下渲染所需高度(px)
         let pages = type === RefreshType.PLACEHOLDER ? this.placeholderPages : this.visiblePages;
@@ -580,6 +594,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             this.renderer.setStyle(this.ele, 'max-height', this.containerMaxHeight + 'px');
             this.renderer.setStyle(this.ele, 'overflow-x', 'hidden');
             this.renderer.setStyle(this.ele, 'overflow-y', 'auto');
+        } else {
+            this.renderer.setStyle(this.ele, 'max-height', 'none');
+            this.renderer.setStyle(this.ele, 'overflow', 'auto');
         }
     }
 
@@ -591,6 +608,11 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     private bindEvents() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+
+        this.subscription = new Subscription();
         const scrollScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
         this.subscription.add(

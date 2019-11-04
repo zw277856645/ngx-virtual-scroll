@@ -9,8 +9,17 @@ window.$docsify = {
         DemoBoxAngular.create({
             project: {
                 dependencies: {
-                    "@demacia/cmjs-lib": "0.0.1"
+                    "@angular/forms": "8.1.2",
+                    "@demacia/cmjs-lib": "0.0.1",
+                    "@demacia/ngx-virtual-scroll": "0.0.7",
+                    "bootstrap-switch": "3.3.2",
+                    "jw-bootstrap-switch-ng2": "2.0.5"
                 }
+            },
+            extraModules: {
+                "FormsModule": "@angular/forms",
+                "VirtualScrollModule": "@demacia/ngx-virtual-scroll",
+                "JwBootstrapSwitchNg2Module": "jw-bootstrap-switch-ng2"
             }
         })
     ]
