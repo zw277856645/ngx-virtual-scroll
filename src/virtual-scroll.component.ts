@@ -622,7 +622,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             this.renderer.setStyle(this.ele, 'overflow-y', 'auto');
         } else {
             this.renderer.setStyle(this.ele, 'max-height', 'none');
-            this.renderer.setStyle(this.ele, 'overflow', 'auto');
+            this.renderer.setStyle(this.ele, 'overflow', 'hidden');
         }
     }
 

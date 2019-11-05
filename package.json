@@ -1,6 +1,6 @@
 {
   "name": "@demacia/ngx-virtual-scroll",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "angular big list viewer",
   "scripts": {
     "build": "ng-packagr -p package.json",
