@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { fade } from '@demacia/cmjs-lib';
 import { resultAnim } from './result.animation';
 
 @Component({
@@ -8,10 +7,7 @@ import { resultAnim } from './result.animation';
         './demo-common.component.less',
         './demo-dynamic.component.less'
     ],
-    animations: [
-        fade({ duration: 500 }),
-        resultAnim()
-    ]
+    animations: [ resultAnim() ]
 })
 export class DemoDynamicComponent {
 
