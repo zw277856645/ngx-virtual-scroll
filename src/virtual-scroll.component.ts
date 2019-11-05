@@ -179,6 +179,11 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     ngOnChanges(changes: SimpleChanges) {
+        if ((changes.multiseriate && !changes.multiseriate.firstChange)
+            || (changes.observeChanges && !changes.observeChanges.firstChange)) {
+            this.checkConflictParams();
+        }
+
         if ((changes.items && !changes.items.firstChange)
             || (changes.itemHeight && !changes.itemHeight.firstChange)
             || (changes.itemGap && !changes.itemGap.firstChange)
@@ -208,11 +213,6 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
             || (changes.adjustFactor && !changes.adjustFactor.firstChange)) {
             this.fixPageParams();
             this.refresh();
-        }
-
-        if ((changes.multiseriate && !changes.multiseriate.firstChange)
-            || (changes.observeChanges && !changes.observeChanges.firstChange)) {
-            this.checkConflictParams();
         }
     }
 
@@ -331,6 +331,18 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     scrollToItem(item: T, options?: ScrollConfig) {
+        // 多列模式找到当前行行首元素
+        if (this.multiseriate) {
+            while (item[ this.internalAttrs.index ] > 0) {
+                if (this.items[ item[ this.internalAttrs.index ] - 1 ][ this.internalAttrs.accHeight ] ===
+                    item[ this.internalAttrs.accHeight ]) {
+                    item = this.items[ item[ this.internalAttrs.index ] - 1 ];
+                } else {
+                    break;
+                }
+            }
+        }
+
         let offsetY = 0;
         if (item[ this.internalAttrs.index ] > 0) {
             offsetY = this.items[ item[ this.internalAttrs.index ] - 1 ][ this.internalAttrs.accHeight ];
@@ -410,7 +422,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     cur[ this.internalAttrs.accHeight ] = prev[ 0 ]
                         + (cur[ this.internalAttrs.dynamicHeight ] || cur[ this.internalAttrs.height ]);
 
-                    return [ cur[ this.internalAttrs.accHeight ], 0 ];
+                    return [ cur[ this.internalAttrs.accHeight ], 0, 0, null ];
                 } else {
                     let accWidth = prev[ 1 ] + cur[ this.internalAttrs.width ];
 
@@ -418,17 +430,31 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     if (accWidth > scrollWidth) {
                         cur[ this.internalAttrs.accHeight ] = prev[ 0 ] + cur[ this.internalAttrs.height ];
 
-                        // 每当换行时累计宽度重新计算
-                        return [ cur[ this.internalAttrs.accHeight ], cur[ this.internalAttrs.width ] ];
+                        return [
+                            cur[ this.internalAttrs.accHeight ],
+                            cur[ this.internalAttrs.width ], // 每当换行时累计宽度重新计算
+                            prev[ 0 ],
+                            [ cur ]
+                        ];
                     }
                     // 当前条目与前一个元素处于同一行
                     else {
-                        cur[ this.internalAttrs.accHeight ] = index > 0 ? prev[ 0 ] : cur[ this.internalAttrs.height ];
+                        let accHeight = prev[ 2 ] + cur[ this.internalAttrs.height ];
 
-                        return [ cur[ this.internalAttrs.accHeight ], accWidth ];
+                        // 行所有条目高度可能不一样，行累计高度取值最高的那项
+                        if (accHeight > prev[ 0 ]) {
+                            prev[ 3 ].forEach(item => item[ this.internalAttrs.accHeight ] = accHeight);
+                            cur[ this.internalAttrs.accHeight ] = accHeight;
+
+                            return [ accHeight, accWidth, prev[ 2 ], prev[ 3 ].concat(cur) ];
+                        } else {
+                            cur[ this.internalAttrs.accHeight ] = prev[ 0 ];
+
+                            return [ prev[ 0 ], accWidth, prev[ 2 ], prev[ 3 ].concat(cur) ];
+                        }
                     }
                 }
-            }, [ 0 /* 累计高度 */, 0 /* 条目所在行的累计宽度 */ ]);
+            }, [ 0 /* 行最大累计高度 */, 0 /* 条目所在行的累计宽度 */, 0 /* 基准累计高度 */, [] /* 当前行所有元素 */ ]);
 
             this.renderer.setStyle(this.totalHeight.nativeElement, 'height', height + 'px');
         }

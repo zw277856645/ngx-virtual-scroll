@@ -135,7 +135,8 @@
     </div>
   </div>
   <div class="right">
-    <virtual-scroll [windowScroll]="windowScroll"
+    <virtual-scroll #scroll="virtualScroll"
+                    [windowScroll]="windowScroll"
                     [containerMaxHeight]="containerMaxHeight"
                     [items]="list"
                     [itemRender]="showPlaceholders ? itemTemplate : null"
@@ -152,7 +153,9 @@
         <div class="item placeholder">加载中 ...</div>
       </ng-template>
       <ng-template #itemTemplate let-item>
-        <div class="item">{{item.name}}</div>
+        <div class="item">
+          <a class="linkto" (click)="scroll.scrollToItem(item)">{{item.name}}</a>
+        </div>
       </ng-template>
     </virtual-scroll>
   </div>

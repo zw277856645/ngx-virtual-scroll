@@ -27,7 +27,9 @@ demo/demo-common.component.ts
   }
 }
 
+demo/result.animation.ts
 demo/demo-dynamic.component.html
+demo/demo-common.component.less
 demo/demo-dynamic.component.less
 demo/demo-dynamic.component.ts
 
