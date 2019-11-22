@@ -21,9 +21,6 @@
     "use-output-property-decorator": true,
     "## NG 05-12 02": "把 @Input 或者 @Output 放到所装饰的属性的同一行",
     "prefer-inline-decorator": true,
-    "## NG 05-13": "避免为输入和输出属性指定别名",
-    "no-output-rename": true,
-    "no-input-rename": true,
     "## NG 05-16": "不要给输出属性加 on 前缀",
     "no-output-on-prefix": true,
     "## NG 06-03": "使用 @HostListener 和 @HostBinding，而不是 @Directive 和 @Component 装饰器的 host 属性",
@@ -180,14 +177,6 @@
         "method": "never",
         "constructor": "never"
       }
-    ],
-    "## TSLint 037": "变量命名规则检测，如合法的变量名如下：myName、MY_NAME、_myName、MyName",
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore",
-      "allow-pascal-case"
     ],
     "## TSLint 038": "空格检查",
     "whitespace": [
