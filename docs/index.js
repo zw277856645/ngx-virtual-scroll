@@ -11,7 +11,7 @@ window.$docsify = {
                 dependencies: {
                     "@angular/forms": "8.1.2",
                     "@demacia/cmjs-lib": "0.0.1",
-                    "@demacia/ngx-virtual-scroll": "0.0.10",
+                    "@demacia/ngx-virtual-scroll": "0.0.12",
                     "bootstrap-switch": "3.3.2",
                     "jw-bootstrap-switch-ng2": "2.0.5"
                 }
