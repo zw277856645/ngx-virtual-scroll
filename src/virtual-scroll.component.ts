@@ -543,7 +543,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         let clientHeight = scrollEle.clientHeight;
 
         // 计算屏幕/容器上、中、下渲染所需高度(px)
-        let pages = type === RefreshType.PLACEHOLDER ? this.placeholderPages : this.visiblePages;
+        let hasBothType = type === RefreshType.PLACEHOLDER && !!this.itemRender;
+        let placeholderPages = hasBothType ? Math.max(this.placeholderPages, this.visiblePages) : this.placeholderPages;
+        let pages = type === RefreshType.PLACEHOLDER ? placeholderPages : this.visiblePages;
         let middleArea = clientHeight;
         let topArea = (pages - 1) / 2 * this.getAdjustFactorByDirection().top * middleArea;
         let bottomArea = (pages - 1) / 2 * this.getAdjustFactorByDirection().bottom * middleArea;
@@ -726,7 +728,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     private fixPageParams() {
         // 参数容错
         this.visiblePages = Math.max(1, this.visiblePages);
-        this.placeholderPages = Math.max(this.visiblePages, this.placeholderPages);
+        this.placeholderPages = Math.max(1, this.placeholderPages);
         this.adjustFactor = Math.max(0, Math.min(1, this.adjustFactor));
     }
 
