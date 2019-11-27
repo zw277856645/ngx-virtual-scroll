@@ -675,10 +675,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         this.subscription.add(
             fromEvent(this.windowScroll ? window : this.ele, 'scroll')
                 .pipe(
+                    map(() => this.scrolling = true),
                     auditTime(this.auditTime, scrollScheduler),
                     map(() => {
-                        this.scrolling = true;
-
                         if (!this.manualScrolling) {
                             this.cacheScrollParams();
                             this.refreshPlaceholders();
