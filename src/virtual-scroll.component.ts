@@ -53,7 +53,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     // 可视条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外缓存数量 = (visiblePages - 1) / 2
     // 根据用户滚动方向，「上/下屏幕外缓存数量」会自动调节，滚动方向的缓存数量会加大
-    // 有效值范围 n ≥ 1.5
+    // 有效值范围 n ≥ 1
     @Input() @InputNumber() visiblePages: number = 3;
 
     // 占位符条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = (placeholderPages - visiblePages) / 2
@@ -725,7 +725,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
 
     private fixPageParams() {
         // 参数容错
-        this.visiblePages = Math.max(1.5, this.visiblePages);
+        this.visiblePages = Math.max(1, this.visiblePages);
         this.placeholderPages = Math.max(this.visiblePages, this.placeholderPages);
         this.adjustFactor = Math.max(0, Math.min(1, this.adjustFactor));
     }

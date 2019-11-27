@@ -37,7 +37,7 @@
       <div class="config">
         <div class="title">visiblePages</div>
         <div class="action input">
-          <div class="minus" (click)="minus('visiblePages',1,1.5)">- 1</div>
+          <div class="minus" (click)="minus('visiblePages',1,1)">- 1</div>
           <input type="text" [(ngModel)]="visiblePages" readonly>
           <div class="plus" (click)="plus('visiblePages',1,2000)">+ 1</div>
         </div>
@@ -46,7 +46,7 @@
       <div class="config" *ngIf="showPlaceholders" @fade>
         <div class="title">placeholderPages</div>
         <div class="action input">
-          <div class="minus" (click)="minus('placeholderPages',1,1.5)">- 1</div>
+          <div class="minus" (click)="minus('placeholderPages',1,1)">- 1</div>
           <input type="text" [(ngModel)]="placeholderPages" readonly>
           <div class="plus" (click)="plus('placeholderPages',1,2000)">+ 1</div>
         </div>
