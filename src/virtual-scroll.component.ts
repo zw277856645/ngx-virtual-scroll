@@ -120,6 +120,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 插件自动添加的私有属性
     internalAttrs: ItemInternalAttrs;
 
+    // 当前是否正在滚动，滚动时禁用指针事件，可优化性能
+    scrolling: boolean;
+
     private lastOffsetY: number = 0;
     private scrollDirection: ScrollDirection = ScrollDirection.DOWN;
     private lastViewportInfo: ViewportInfo<T>;
@@ -674,6 +677,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                 .pipe(
                     auditTime(this.auditTime, scrollScheduler),
                     map(() => {
+                        this.scrolling = true;
+
                         if (!this.manualScrolling) {
                             this.cacheScrollParams();
                             this.refreshPlaceholders();
@@ -682,6 +687,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     debounceTime(this.debounceTime)
                 )
                 .subscribe(() => {
+                    this.scrolling = false;
+
                     if (!this.manualScrolling) {
                         this.refreshVisibles();
                     }

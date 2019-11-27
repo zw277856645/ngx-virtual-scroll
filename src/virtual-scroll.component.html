@@ -19,7 +19,7 @@
 <!-- 仅用于撑开高度 -->
 <div class="total-height" [class.empty]="!items || !items.length" #totalHeight></div>
 
-<div class="items-container" #itemsContainer>
+<div class="items-container" [class.scrolling]="scrolling" #itemsContainer>
   <ng-container *ngFor="let item of viewportItems;trackBy:trackByItems">
     <!-- 支持动态高度 & 非多列模式 -->
     <ng-container *ngIf="observeChanges && !multiseriate; else fixedTemplate">
