@@ -44,14 +44,14 @@
     "rxjs": "^6.5.1"
   },
   "dependencies": {
+    "@angular/core": "8.1.2",
+    "@angular/common": "8.1.2",
+    "@angular/animations": "8.1.2",
     "@tweenjs/tween.js": "~17.2.0",
     "@types/tween.js": "~16.9.0",
     "@demacia/cmjs-lib": "~0.0.1"
   },
   "devDependencies": {
-    "@angular/common": "8.1.2",
-    "@angular/core": "8.1.2",
-    "@angular/animations": "8.1.2",
     "@angular/platform-browser": "8.1.2",
     "@angular/platform-browser-dynamic": "8.1.2",
     "@angular/compiler-cli": "8.1.2",
