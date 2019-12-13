@@ -6,6 +6,9 @@ import { of, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, first, map, pairwise, skipWhile, switchMap, switchMapTo, take } from 'rxjs/operators';
 import { ItemInternalAttrs } from './models';
 
+/**
+ * @ignore
+ */
 @Directive({
     selector: '[visibleObserver]'
 })

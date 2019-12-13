@@ -1,9 +1,14 @@
+image: node:10.15.3
+
 pages:
   stage: deploy
   script:
+    - npm i @compodoc/compodoc
+    - npm run docs:build
     - cp -r docs/. public
   artifacts:
     paths:
       - public
   only:
     - master
+

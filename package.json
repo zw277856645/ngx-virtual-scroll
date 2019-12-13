@@ -7,7 +7,9 @@
     "publish": "npm publish dist --access public",
     "clean": "rimraf dist",
     "doc": "docsify serve docs --open",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "docs:build": "compodoc src -c compodoc.json",
+    "docs:watch": "npm run docs:build -- -w -s -o --port=7000"
   },
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "ngPackage": {
@@ -57,6 +59,7 @@
     "@angular/compiler-cli": "8.1.2",
     "@angular/compiler": "8.1.2",
     "@types/node": "10.14.5",
+    "@compodoc/compodoc": "1.1.11",
     "zone.js": "0.9.1",
     "rxjs": "6.5.1",
     "ng-packagr": "5.1.0",

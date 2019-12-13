@@ -2,6 +2,9 @@ import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { VirtualScrollComponent } from './virtual-scroll.component';
 import { ItemInternalAttrs } from './models';
 
+/**
+ * @ignore
+ */
 @Directive({
     selector: '[placeholderObserver]'
 })

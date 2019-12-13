@@ -14,6 +14,11 @@ import { animate, transition, trigger } from '@angular/animations';
 
 const TWEEN = require('@tweenjs/tween.js');
 
+/**
+ * @example
+ * <!-- 数据源后可连接管道操作符，但要注意对不可变(immutable)操作的处理，比如排序 -->
+ * <virtual-scroll [items]="datas | pipe1 | pipe2 | ..."></virtualScroll>
+ */
 @Component({
     selector: 'virtual-scroll, [virtualScroll]',
     templateUrl: './virtual-scroll.component.html',
@@ -27,28 +32,56 @@ const TWEEN = require('@tweenjs/tween.js');
 })
 export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewInit, OnDestroy {
 
+    /**
+     * @ignore
+     */
     @ViewChild('totalHeight', { static: false }) totalHeight: ElementRef;
+
+    /**
+     * @ignore
+     */
     @ViewChild('itemsContainer', { static: false }) itemsContainer: ElementRef;
 
-    // 是否是 window 滚动，默认为指令所在元素为滚动窗体
-    @Input() @InputBoolean() windowScroll: boolean;
+    /**
+     * 是否是 window 滚动，默认为指令所在元素为滚动窗体
+     */
+    @Input() @InputBoolean() windowScroll: boolean = false;
 
-    // 无法识别排序导致的数组变化，请使用 arr = [].concat(arr) 改变数组引用
+    /**
+     * 数据源
+     *
+     * `无法识别不可变(immutable)操作导致的数据变化，比如排序请使用 arr = [].concat(arr).sort() 改变数组引用`
+     */
     @Input() items: T[];
 
-    // 不提供则使用自动生成的id为返回值
-    // 推荐定时刷新的列表提供该配置，因为插件检测到的数据是变化了的，会重新生成id
+    /**
+     * 内部 *ngFor 的 trackBy 方法
+     *
+     * - 不提供则使用自动生成的id为返回值
+     * - 推荐为定时刷新的数据源提供该配置，因为插件检测到的数据是变化了的，会重新生成id
+     */
     @Input() trackBy: TrackByFunction<T>;
 
-    // items 为空时显示的模板
+    /**
+     * 数据源(items)为空时显示的模板
+     *
+     * - 您可能会对数据源做筛选等操作，当筛选后没有任何数据时，显示一个类似 "No Results" 的提示是一种比较友好的方式
+     */
     @Input() emptyRender: TemplateRef<any>;
 
-    // 滚动到的条目不会立即显示，因为用户可能继续滚动，先使用性能代价较小的占位元素替代
-    // 如果不希望出现占位符条目，可直接设置本参数为真实渲染模板
+    /**
+     * 占位符条目渲染模板
+     *
+     * - 滚动到的条目不会立即显示真实模板，因为用户可能不关心当前数据而继续滚动，先使用性能代价很小的占位元素替代。
+     * 当真实模板比较复杂时，推荐开启占位符功能，可极大优化刷新效率，解决闪烁和空白问题
+     * - 如果希望`只显示真实条目`，可直接设置本参数为真实渲染模板，且真实模板参数 [itemRender]{@link #itemRender} 不再设置，
+     * 推荐在真实模本比较简单的情况下使用
+     */
     @Input() @ViewChild('placeholderTemplate', { static: true }) placeholderRender: TemplateRef<NgForOfContext<T>>;
 
-    // 真实条目渲染模板
-    // 不提供则使用 placeholderRender 替代
+    /**
+     * 真实条目渲染模板
+     */
     @Input() itemRender: TemplateRef<NgForOfContext<T>>;
 
     // 可视条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外缓存数量 = (visiblePages - 1) / 2
@@ -114,14 +147,26 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     // 占位符条目改变
     @Output() readonly placeholderItemsChange = new EventEmitter<ItemChanges<T>>();
 
-    // 当前所有加载的条目
-    viewportItems: T[];
+    /**
+     * @ignore
+     *
+     * 当前滚动位置计算出的所有需要渲染的条目
+     */
+    readonly viewportItems: T[];
 
-    // 插件自动添加的私有属性
-    internalAttrs: ItemInternalAttrs;
+    /**
+     * @ignore
+     *
+     * 插件自动添加的私有属性
+     */
+    readonly internalAttrs: ItemInternalAttrs;
 
-    // 当前是否正在滚动，滚动时禁用指针事件，可优化性能
-    scrolling: boolean;
+    /**
+     * @ignore
+     *
+     * 当前是否正在滚动，滚动时禁用指针事件，可优化性能
+     */
+    readonly scrolling: boolean;
 
     private lastOffsetY: number = 0;
     private scrollDirection: ScrollDirection = ScrollDirection.DOWN;
@@ -475,7 +520,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     let itemsChange = this.createItemsChange(viewportInfo, RefreshType.PLACEHOLDER);
 
                     itemsChange.removed.forEach(item => item[ this.internalAttrs.visible ] = false);
-                    this.viewportItems = itemsChange.all;
+                    (this as { viewportItems: T[] }).viewportItems = itemsChange.all;
 
                     this.placeholderItemsChange.emit(itemsChange);
                     this.lastViewportInfo = viewportInfo;
@@ -675,7 +720,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         this.subscription.add(
             fromEvent(this.windowScroll ? window : this.ele, 'scroll')
                 .pipe(
-                    map(() => this.scrolling = true),
+                    map(() => (this as { scrolling: boolean }).scrolling = true),
                     auditTime(this.auditTime, scrollScheduler),
                     map(() => {
                         if (!this.manualScrolling) {
@@ -686,7 +731,7 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     debounceTime(this.debounceTime)
                 )
                 .subscribe(() => {
-                    this.scrolling = false;
+                    (this as { scrolling: boolean }).scrolling = false;
 
                     if (!this.manualScrolling) {
                         this.refreshVisibles();
