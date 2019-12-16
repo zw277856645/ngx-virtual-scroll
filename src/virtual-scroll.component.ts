@@ -14,11 +14,6 @@ import { animate, transition, trigger } from '@angular/animations';
 
 const TWEEN = require('@tweenjs/tween.js');
 
-/**
- * @example
- * <!-- 数据源后可连接管道操作符，但要注意对不可变(immutable)操作的处理，比如排序 -->
- * <virtual-scroll [items]="datas | pipe1 | pipe2 | ..."></virtualScroll>
- */
 @Component({
     selector: 'virtual-scroll, [virtualScroll]',
     templateUrl: './virtual-scroll.component.html',
@@ -51,6 +46,10 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
      * 数据源
      *
      * `无法识别不可变(immutable)操作导致的数据变化，比如排序请使用 arr = [].concat(arr).sort() 改变数组引用`
+     *
+     * @example
+     * <!-- 数据源后可连接管道操作符，但要注意对不可变(immutable)操作的处理，比如排序 -->
+     * <virtual-scroll [items]="datas | pipe1 | pipe2 | ..."></virtualScroll>
      */
     @Input() items: T[];
 
@@ -84,27 +83,62 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
      */
     @Input() itemRender: TemplateRef<NgForOfContext<T>>;
 
-    // 可视条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外缓存数量 = (visiblePages - 1) / 2
-    // 根据用户滚动方向，「上/下屏幕外缓存数量」会自动调节，滚动方向的缓存数量会加大
-    // 有效值范围 n ≥ 1
+    /**
+     * 真实条目页数
+     *
+     * - 根据容器可视区域高度，每一页为一屏。上/下屏幕外缓存数量 = (visiblePages - 1) / 2
+     * - 根据用户滚动方向，「上/下屏幕外真实数量」会自动调节，滚动方向的缓存数量会加大
+     * - 有效值范围 n ≥ 1
+     */
     @Input() @InputNumber() visiblePages: number = 3;
 
-    // 占位符条目页数，根据可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = (placeholderPages - visiblePages) / 2
-    // 根据用户滚动方向，「上/下屏幕外占位符数量」会自动调节，滚动方向的缓存数量会加大
-    // 超出占位符数量的条目不会加载。占位符消耗性能较小，可适当调大本参数优化滚动体验
-    // visiblePages ≤ placeholderPages，「可视条目」为「占位符条目」中处于可视窗口内的条目
-    // 不设置或值小于 visiblePages，修正值为 visiblePages
+    /**
+     * 占位符条目页数
+     *
+     * - 根据容器可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = (placeholderPages - visiblePages) / 2
+     * - 根据用户滚动方向，「上/下屏幕外占位符数量」会自动调节，滚动方向的缓存数量会加大
+     * - 超出占位符数量的条目不会加载。占位符消耗性能较小，可适当调大本参数优化滚动体验
+     * - visiblePages ≤ placeholderPages，「真实条目」为「占位符条目」中处于可视窗口内的条目
+     * - placeholderPages 不设置或值小于 visiblePages，修正值为 visiblePages
+     */
     @Input() @InputNumber() placeholderPages: number = 0;
 
-    // 「上/下屏幕外缓存数量」和「上/下屏幕外占位符数量」调节倍率，有效值范围 0 ≤ n ≤ 1
+    /**
+     * 「上/下屏幕外真实数量」和「上/下屏幕外占位符数量」调节倍率，有效值范围 0 ≤ n ≤ 1。
+     * 滚动方向比反方向多加载 adjustFactor 倍率的条目
+     */
     @Input() @InputNumber() adjustFactor: number = 0.5;
 
-    // 条目高度，必须设置。不需要每个条目高度都相同，当各条目高度不同时，使用回调函数形式
-    // 注意不要给条目设置 margin-top 和 margin-bottom，使用 itemGap 设置条目的间隙
+    /**
+     * 条目高度
+     *
+     * - 插件已设置盒模型为border-box，条目高度 = height + padding-(top、bottom) + border-(top、bottom)，`必须设置`
+     * - 不需要每个条目高度都相同，当各条目高度不同时，使用回调函数形式
+     * - 当参数值变化时，插件会自动刷新，但如果是回调函数形式，插件只在初始时调用一次，不会跟踪返回值的变化，
+     * 当返回值变化时需要用户自行调用 [refresh]{@link #refresh} 方法刷新
+     * - 不要给条目设置 margin-top 和 margin-bottom，使用 [itemGap]{@link #itemGap} 设置条目的间隙
+     *
+     * @example
+     * <!-- 回调函数形式示例 -->
+     * <virtual-scroll [items]="users" [itemHeight]="defineItemHeight"></virtual-scroll>
+     *
+     * @Component({ ... })
+     * export class DemoComponent {
+     *
+     *   users: User[] = [ user1, user2, ... ];
+     *
+     *   defineItemHeight(user: User, index: number) {
+     *      return user.children.length > 0 ? 300 : 200;
+     *   }
+     * }
+     */
     @Input() itemHeight: number | string | ((item: T, index: number) => number);
 
-    // 条目之间间隙
-    // 当为多列模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
+    /**
+     * 条目之间间隙
+     *
+     * - 当为多列模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
+     */
     @Input() @InputNumber() itemGap: number | { horizontal: number; vertical: number } = 0;
 
     // 滚动容器最大高度，仅当非 window 滚动时有效(windowScroll = false)
