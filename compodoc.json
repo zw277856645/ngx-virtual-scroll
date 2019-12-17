@@ -3,7 +3,6 @@
   "tsconfig": "tsconfig.json",
   "output": "docs",
   "name": "ngx-virtual-scroll documentation",
-  "language": "zh-CN",
   "hideGenerator": true,
   "disablePrivate": true,
   "disableLifeCycleHooks": true,

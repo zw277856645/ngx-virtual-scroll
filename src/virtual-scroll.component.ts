@@ -12,8 +12,15 @@ import {
 } from './models';
 import { animate, transition, trigger } from '@angular/animations';
 
+/**
+ * @ignore
+ */
 const TWEEN = require('@tweenjs/tween.js');
 
+/**
+ * <example-url>http://localhost/demo/mysample.component.html</example-url>
+ * <example-url>/demo/mysample.component.html</example-url>
+ */
 @Component({
     selector: 'virtual-scroll, [virtualScroll]',
     templateUrl: './virtual-scroll.component.html',
@@ -45,11 +52,23 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     /**
      * 数据源
      *
-     * `无法识别不可变(immutable)操作导致的数据变化，比如排序请使用 arr = [].concat(arr).sort() 改变数组引用`
+     * `无法识别不可变(immutable)操作导致的数据变化，对于此类操作请改变数组引用，比如排序请使用 arr = [].concat(arr).sort()`
      *
-     * @example
-     * <!-- 数据源后可连接管道操作符，但要注意对不可变(immutable)操作的处理，比如排序 -->
-     * <virtual-scroll [items]="datas | pipe1 | pipe2 | ..."></virtualScroll>
+     * ~~~ html
+     * <virtual-scroll [items]="datas | sort | ..."></virtual-scroll>
+     * ~~~
+     *
+     * ~~~ typescript
+     * \@Pipe({
+     *     name: 'sort'
+     * })
+     * export class SortPipe implements PipeTransform {
+     *
+     *     transform(datas: any[]) {
+     *         return [].concat(datas).sort();
+     *     }
+     * }
+     * ~~~
      */
     @Input() items: T[];
 
@@ -118,11 +137,16 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
      * 当返回值变化时需要用户自行调用 [refresh]{@link #refresh} 方法刷新
      * - 不要给条目设置 margin-top 和 margin-bottom，使用 [itemGap]{@link #itemGap} 设置条目的间隙
      *
-     * @example
-     * <!-- 回调函数形式示例 -->
-     * <virtual-scroll [items]="users" [itemHeight]="defineItemHeight"></virtual-scroll>
+     * ---
      *
-     * @Component({ ... })
+     * **回调函数形式示例**
+     *
+     * ~~~ html
+     * <virtual-scroll [items]="users" [itemHeight]="defineItemHeight"></virtual-scroll>
+     * ~~~
+     *
+     * ~~~ typescript
+     * \@Component({ ... })
      * export class DemoComponent {
      *
      *   users: User[] = [ user1, user2, ... ];
@@ -131,55 +155,99 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
      *      return user.children.length > 0 ? 300 : 200;
      *   }
      * }
+     * ~~~
      */
     @Input() itemHeight: number | string | ((item: T, index: number) => number);
 
     /**
      * 条目之间间隙
      *
-     * - 当为多列模式且条目间水平间距和垂直间距不同时，使用对象形式的参数
+     * - 当为[多列模式]{@link #multiseriate}且条目间水平间距和垂直间距不同时，使用对象形式的参数
      */
     @Input() @InputNumber() itemGap: number | { horizontal: number; vertical: number } = 0;
 
-    // 滚动容器最大高度，仅当非 window 滚动时有效(windowScroll = false)
-    // PS：对于非 window 滚动，必须有容器高度，也可不设定此参数，而在样式中设定
+    /**
+     * 滚动容器最大高度，仅当 `windowScroll = false` 时有效
+     *
+     * `对于非 window 滚动，必须有容器高度，您也可不设定此参数，而在样式中设定`
+     */
     @Input() @InputNumber() containerMaxHeight: number;
 
-    // 刷新占位符条目间隔(ms)
+    /**
+     * 滚动时刷新`占位符条目`的时间间隔(ms)，可根据页面性能情况，自行调节
+     *
+     * - 该值设置的越小越好，可减少/屏蔽滚动时浏览器不能及时刷新导致的空白问题，所以占位符条目越简单越好
+     */
     @Input() @InputNumber() auditTime: number = 0;
 
-    // 刷新可视条目间隔(ms)
+    /**
+     * 滚动时刷新`真实条目`的时间间隔(ms)，可根据页面性能情况，自行调节
+     */
     @Input() @InputNumber() debounceTime: number = 300;
 
     /* -------- 动态高度 -------- */
 
-    // 是否监测条目 DOM 变化，设置 true 条目高度变化后将自动刷新
-    @Input() @InputBoolean() observeChanges: boolean;
+    /**
+     * 是否开启动态高度监测
+     *
+     * - 是否使用 [MutationObserver]{@link https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver}
+     * 监测条目 DOM 变化，设置 true 当 DOM 变化导致条目高度变化后将自动刷新。开启后会读取元素原生高度，有一定性能影响，
+     * 请只在无法确定高度的情况下使用，可确定高度请使用 [itemHeight]{@link #itemHeight}
+     */
+    @Input() @InputBoolean() observeChanges: boolean = false;
 
-    // 监测条目 DOM 变化的时间间隔，只在 observeChanges = true 时有效
+    /**
+     * 监测条目 DOM 变化的时间间隔，只在 `observeChanges = true` 时有效，用于合并短时间内触发多次的变化事件，减少刷新次数
+     */
     @Input() @InputNumber() observeIntervalTime: number = 300;
 
-    // 条目动态高度判断逻辑，返回大于0的数值代表符合条件，其他都为条件不成立，插件将自动读取原生 DOM 属性
-    // 提供该配置可加快布局刷新，因为插件自动读取需要经历比较多的轮回才能确定高度稳定，有一定的时间浪费
-    // 动态高度可能有多种不同的场景，只需处理高度固定的场景，其他场景返回空即可
+    /**
+     * 条目动态高度判断函数，只在 `observeChanges = true` 时有效，返回特定场景下的高度值，主要用于加快布局刷新，
+     * 使 [scrollToPosition]{@link #scrollToPosition}、[scrollToIndex]{@link #scrollToIndex}、
+     * [scrollToItem]{@link #scrollToItem} 能立即滚动到正确位置，对 [itemHeight]{@link #itemHeight} 的补充
+     *
+     * ---
+     *
+     * **使用场景解释：**
+     *
+     * 适用于含有导航的场景，点击导航通过调用 scrollToPosition、scrollToIndex、scrollToItem 可滚动到相应的位置，
+     * 但当发生动态高度变化且含有过渡动画时，插件自动处理需要经历比较多的轮回才能确定高度稳定，然后刷新布局，有一定的时间延时，
+     * 在这之前调用滚动方法就会滚动到错误位置，某些场景的变化高度可能是确定值，针对此类场景可通过 dynamicHeight 方法返回确定值，
+     * 插件会立即刷新布局从而使滚动方法能正确处理。
+     * `没有导航或对 scrollToPosition、scrollToIndex、scrollToItem 调用无严格要求的情况下，不需要配置本参数`
+     */
     @Input() dynamicHeight: (item: T) => number = () => undefined;
 
     /* -------- 多列模式 -------- */
 
-    // 是否是多列模式(每行显示多个条目)
-    // 注意：多列模式不支持动态高度
-    @Input() @InputBoolean() multiseriate: boolean;
+    /**
+     * 是否是多列模式，即每行显示多个条目
+     *
+     * `多列模式不支持动态高度，即 multiseriate 与 observeChanges 不能同时设置为 true`
+     */
+    @Input() @InputBoolean() multiseriate: boolean = false;
 
-    // 条目宽度，多列模式时必须设置，当各条目宽度不同时，使用回调函数形式
-    // 注意不要给条目设置 margin-left 和 margin-right，使用 itemGap 设置条目的间隙
-    // 与 itemHeight 不同的是，可设置百分比字符串
+    /**
+     * 条目宽度，插件已设置盒模型为border-box，条目宽度 = width + padding-(left、right) + border-(left、right)，
+     * `多列模式时必须设置`
+     *
+     * - 不需要每个条目宽度都相同，当各条目宽度不同时，使用回调函数形式
+     * - 当参数值变化时，插件会自动刷新，但如果是回调函数形式，插件只在初始时调用一次，不会跟踪返回值的变化，
+     * 当返回值变化时需要用户自行调用 [refresh]{@link #refresh} 方法刷新
+     * - 不要给条目设置 margin-left 和 margin-right，使用 itemGap 设置条目的间隙
+     * - 与 [itemHeight]{@link #itemHeight} 不同的是，可设置为相对于滚动容器宽度的百分比字符串
+     */
     @Input() itemWidth: number | string | ((item: T, index: number) => number | string);
 
-    // 可视条目改变
-    @Output() readonly visibleItemsChange = new EventEmitter<ItemChanges<T>>();
+    /**
+     * 真实条目改变事件
+     */
+    @Output() readonly visibleItemsChange: EventEmitter<ItemChanges<T>> = new EventEmitter();
 
-    // 占位符条目改变
-    @Output() readonly placeholderItemsChange = new EventEmitter<ItemChanges<T>>();
+    /**
+     * 占位符条目改变事件
+     */
+    @Output() readonly placeholderItemsChange: EventEmitter<ItemChanges<T>> = new EventEmitter();
 
     /**
      * @ignore
@@ -227,6 +295,9 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     private static readonly CONTEXT_ATTR = '_vs_context_';
     private static readonly WIDTH_ATTR = '_vs_width_';
 
+    /**
+     * @ignore
+     */
     constructor(private eleRef: ElementRef,
                 private renderer: Renderer2,
                 private zone: NgZone) {
@@ -315,14 +386,23 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         }
     }
 
+    /**
+     * @ignore
+     */
     mergeHeightChanges(item: T) {
         this.heightChangeSubject.next(item);
     }
 
+    /**
+     * @ignore
+     */
     getItemContext(item: T) {
         return { ...item[ this.internalAttrs.context ], $implicit: item };
     }
 
+    /**
+     * @ignore
+     */
     get trackByItems() {
         return (i: number, v: T) => {
             if (typeof this.trackBy === 'function') {
@@ -333,18 +413,35 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         };
     }
 
+    /**
+     * 当前滚动位置
+     */
     get scrollPosition() {
         return this.lastOffsetY;
     }
 
+    /**
+     * 条目之间水平方向间距
+     */
     get horizontalGap() {
         return this.multiseriate ? (typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.horizontal) : 0;
     }
 
+    /**
+     * 条目之间垂直方向间距
+     */
     get verticalGap() {
         return typeof this.itemGap === 'number' ? this.itemGap : this.itemGap.vertical;
     }
 
+    /**
+     * 滚动到指定位置
+     *
+     * ---
+     *
+     * @param position 滚动条垂直方向位置
+     * @param options 滚动行为配置
+     */
     scrollToPosition(position: number, options?: ScrollConfig) {
         options = Object.assign(new ScrollConfig(), options);
 
@@ -408,10 +505,26 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         }
     }
 
+    /**
+     * 滚动到指定下标处的条目
+     *
+     * ---
+     *
+     * @param index 条目在数据源中的下标
+     * @param options 滚动行为配置
+     */
     scrollToIndex(index: number, options?: ScrollConfig) {
         this.scrollToItem(this.items[ index ], options);
     }
 
+    /**
+     * 滚动到指定条目
+     *
+     * ---
+     *
+     * @param item 条目对象
+     * @param options 滚动行为配置
+     */
     scrollToItem(item: T, options?: ScrollConfig) {
         // 多列模式找到当前行行首元素
         if (this.multiseriate) {
@@ -433,6 +546,17 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
         this.scrollToPosition(offsetY, options);
     }
 
+    /**
+     * 刷新
+     *
+     * - 该方法通常不需要调用，插件已内部自动处理。当发生插件无法跟踪的变化导致显示不正常时，可手动调用该方法。
+     * 手动调用时通常调用姿势为 `refresh(true)`，第二个参数为内部优化使用，您可不必关心
+     *
+     * ---
+     *
+     * @param layoutChanged 布局是否发生变化。不传或传入 false 将不刷新布局
+     * @param options 刷新行为配置
+     */
     refresh(layoutChanged?: boolean, options?: RefreshConfig<T>) {
         if (options && typeof options.delay === 'number') {
             setTimeout(() => this.refresh(layoutChanged, { ...options, delay: null }), options.delay);

@@ -5,11 +5,12 @@
   "scripts": {
     "build": "ng-packagr -p package.json",
     "publish": "npm publish dist --access public",
-    "clean": "rimraf dist",
-    "doc": "docsify serve docs --open",
+    "clean": "rimraf dist && rimraf docs",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "docs:build": "compodoc src -c compodoc.json",
-    "docs:watch": "npm run docs:build -- -w -s -o --port=7000"
+    "docs:build": "compodoc src -c compodoc.json --language=zh-CN",
+    "docs:watch": "npm run docs:build -- -w -s -o",
+    "demo:start": "cd demo && npm run demo:start",
+    "demo:prod": "cd demo && npm run demo:prod"
   },
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "ngPackage": {
