@@ -5,6 +5,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const { CleanCssWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/cleancss-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+const helpers = require('./helpers');
 const commonConfig = require('./webpack.common.js');
 
 module.exports = webpackMerge(commonConfig, {
@@ -14,6 +15,7 @@ module.exports = webpackMerge(commonConfig, {
     devtool: 'source-map',
 
     output: {
+        path: helpers.root('../docs/demo'),
         filename: '[name].[hash].js',
     },
 
@@ -64,8 +66,8 @@ module.exports = webpackMerge(commonConfig, {
 
     plugins: [
         new AngularCompilerPlugin({
-            mainPath: 'main.ts',
-            tsConfigPath: './tsconfig-demo.json',
+            mainPath: './main.ts',
+            tsConfigPath: './demo/tsconfig-demo.json',
             sourceMap: true,
             nameLazyFiles: false,
             skipCodeGeneration: false

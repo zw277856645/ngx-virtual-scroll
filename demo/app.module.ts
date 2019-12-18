@@ -6,8 +6,9 @@ import { AppRouterModule } from './app-router.module';
 import { AppComponent } from './app.component';
 import { DemoCommonComponent } from './app/demo-common.component';
 import { DemoDynamicComponent } from './app/demo-dynamic.component';
-import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
 import { VirtualScrollModule } from '../src/virtual-scroll.module';
+import { FormsModule } from '@angular/forms';
+import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
 
 @NgModule({
     imports: [
@@ -15,6 +16,7 @@ import { VirtualScrollModule } from '../src/virtual-scroll.module';
         BrowserModule,
         BrowserAnimationsModule,
         AppRouterModule,
+        FormsModule,
         JwBootstrapSwitchNg2Module,
         VirtualScrollModule
     ],

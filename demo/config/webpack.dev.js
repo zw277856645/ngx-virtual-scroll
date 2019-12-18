@@ -16,8 +16,8 @@ module.exports = webpackMerge(commonConfig, {
 
     plugins: [
         new AngularCompilerPlugin({
-            mainPath: 'main.ts',
-            tsConfigPath: './tsconfig-demo.json',
+            mainPath: './main.ts',
+            tsConfigPath: './demo/tsconfig-demo.json',
             sourceMap: true,
             nameLazyFiles: true,
             skipCodeGeneration: true

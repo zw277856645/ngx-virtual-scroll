@@ -7,10 +7,10 @@
     "publish": "npm publish dist --access public",
     "clean": "rimraf dist && rimraf docs",
     "lint": "tslint -c tslint.json -p tsconfig.json",
+    "docs": "npm run docs:build -- -w -s -o",
     "docs:build": "compodoc src -c compodoc.json --language=zh-CN",
-    "docs:watch": "npm run docs:build -- -w -s -o",
-    "demo:start": "cd demo && npm run demo:start",
-    "demo:prod": "cd demo && npm run demo:prod"
+    "demo": "webpack-dev-server --config demo/config/webpack.dev.js --progress --open --profile --watch",
+    "demo:build": "webpack --config demo/config/webpack.prod.js --progress"
   },
   "$schema": "./node_modules/ng-packagr/package.schema.json",
   "ngPackage": {
@@ -69,6 +69,32 @@
     "rxjs-tslint": "0.1.7",
     "tslint": "5.11.0",
     "codelyzer": "5.1.0",
-    "typescript": "3.4.5"
+    "typescript": "3.4.5",
+    "@angular-devkit/build-angular": "0.802.2",
+    "@angular-devkit/build-optimizer": "0.802.2",
+    "@angular/router": "8.1.2",
+    "@angular/forms": "8.1.2",
+    "@ngtools/webpack": "8.1.2",
+    "@demacia/cmjs-lib": "0.0.1",
+    "bootstrap-switch": "3.3.2",
+    "jw-bootstrap-switch-ng2": "2.0.5",
+    "webpack": "4.19.1",
+    "webpack-cli": "3.1.0",
+    "webpack-dev-server": "3.1.4",
+    "webpack-merge": "3.0.0",
+    "circular-dependency-plugin": "5.0.2",
+    "clean-webpack-plugin": "2.0.1",
+    "autoprefixer": "7.0.1",
+    "uglifyjs-webpack-plugin": "2.1.2",
+    "mini-css-extract-plugin": "0.6.0",
+    "postcss-loader": "2.0.5",
+    "to-string-loader": "1.1.5",
+    "ts-loader": "5.4.4",
+    "url-loader": "1.1.2",
+    "less": "3.8.1",
+    "less-loader": "4.1.0",
+    "css-loader": "0.26.1",
+    "file-loader": "3.0.1",
+    "html-loader": "0.5.5"
   }
 }

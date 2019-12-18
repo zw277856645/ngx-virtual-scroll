@@ -5,25 +5,19 @@ const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const helpers = require('./helpers');
-
 module.exports = {
 
     node: false,
 
     entry: {
-        'polyfills': './polyfills.ts',
-        'vendor': './vendor.ts',
-        'app': './main.ts'
+        'polyfills': './demo/polyfills.ts',
+        'vendor': './demo/vendor.ts',
+        'app': './demo/main.ts'
     },
 
     resolve: {
         extensions: [ '.ts', '.js' ],
         alias: rxPaths()
-    },
-
-    output: {
-        path: helpers.root('dist')
     },
 
     performance: {
@@ -93,7 +87,7 @@ module.exports = {
 
     plugins: [
         new IndexHtmlWebpackPlugin({
-            input: 'index.html',
+            input: './index.html',
             output: 'index.html',
             entrypoints: [
                 'polyfills',
