@@ -1,6 +1,5 @@
 const rxPaths = require('rxjs/_esm5/path-mapping');
 const { SuppressExtractedTextChunksWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/suppress-entry-chunks-webpack-plugin');
-const { IndexHtmlWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/index-html-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -44,12 +43,20 @@ module.exports = {
                 ]
             },
             {
-                test: /(?<!component)\.(css|less)$/,
+                test: /(?<!(component|semantic))\.(css|less)$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
                     'postcss-loader',
                     'less-loader'
+                ]
+            },
+            // semantic-ui-css google fonts 特殊处理，less-loader 对 url fonts 处理有 bug
+            {
+                test: /semantic\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader'
                 ]
             },
             // 资源转换成base64，超出limit交给file-loader处理
@@ -86,15 +93,6 @@ module.exports = {
     },
 
     plugins: [
-        new IndexHtmlWebpackPlugin({
-            input: './index.html',
-            output: 'index.html',
-            entrypoints: [
-                'polyfills',
-                'vendor',
-                'app'
-            ]
-        }),
         new ProgressPlugin(),
         // 避免样式入口文件(entry -> style.css)生成对应的js(style.js)
         new SuppressExtractedTextChunksWebpackPlugin(),

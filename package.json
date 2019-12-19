@@ -75,6 +75,7 @@
     "@angular/router": "8.1.2",
     "@angular/forms": "8.1.2",
     "@ngtools/webpack": "8.1.2",
+    "semantic-ui-css": "2.2.12",
     "@demacia/cmjs-lib": "0.0.1",
     "bootstrap-switch": "3.3.2",
     "jw-bootstrap-switch-ng2": "2.0.5",

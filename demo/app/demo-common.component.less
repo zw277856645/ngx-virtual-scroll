@@ -1,18 +1,19 @@
 .container {
   display: flex;
   .left {
-    width: 200px;
+    @wid: 210px;
+    width: @wid;
     position: relative;
     font-size: 13px;
-    .params {
+    & > .params {
       border: 1px solid rgba(34, 36, 38, .2);
       border-radius: 4px;
       background: #fafafa;
       position: fixed;
       left: 8px;
-      top: 13px;
-      width: 190px;
-      max-height: 96vh;
+      top: 15px;
+      width: @wid - 8px;
+      max-height: e('calc(100vh - 90px)');
       overflow-y: auto;
       &::-webkit-scrollbar {
         width: .4em;
@@ -49,7 +50,7 @@
             text-align: center;
           }
           .minus, .plus {
-            width: 34px;
+            width: 50px;
             white-space: nowrap;
             height: 100%;
             line-height: 30px;
@@ -65,10 +66,17 @@
         }
       }
     }
+    & > .button {
+      position: fixed;
+      left: 8px;
+      bottom: 15px;
+      width: @wid - 8px;
+    }
   }
   .right {
     font-size: 15px;
     flex-grow: 1;
+    padding: 10px 15px;
     .item {
       border: 1px solid rgba(34, 36, 38, .2);
       border-radius: 4px;

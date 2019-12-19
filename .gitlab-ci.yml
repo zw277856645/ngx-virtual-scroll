@@ -5,6 +5,7 @@ pages:
   script:
     - npm i @compodoc/compodoc
     - npm run docs:build
+    - npm run demo:build
     - cp -r docs/. public
   artifacts:
     paths:

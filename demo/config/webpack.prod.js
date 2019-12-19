@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const { IndexHtmlWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/index-html-webpack-plugin');
 const { CleanCssWebpackPlugin } = require('@angular-devkit/build-angular/src/angular-cli-files/plugins/cleancss-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -16,7 +17,7 @@ module.exports = webpackMerge(commonConfig, {
 
     output: {
         path: helpers.root('../docs/demo'),
-        filename: '[name].[hash].js',
+        filename: '[name].[hash].js'
     },
 
     module: {
@@ -65,6 +66,16 @@ module.exports = webpackMerge(commonConfig, {
     },
 
     plugins: [
+        new IndexHtmlWebpackPlugin({
+            input: './index.html',
+            output: 'index.html',
+            baseHref: '/demo/',
+            entrypoints: [
+                'polyfills',
+                'vendor',
+                'app'
+            ]
+        }),
         new AngularCompilerPlugin({
             mainPath: './main.ts',
             tsConfigPath: './demo/tsconfig-demo.json',
