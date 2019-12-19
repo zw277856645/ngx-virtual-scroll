@@ -11,7 +11,7 @@ angular 虚拟滚动插件，适用于大数据量列表展示
 ## 🔗 链接
 
 - [DOCS](https://zw277856645.gitlab.io/ngx-virtual-scroll)
-- [DEMO](https://zw277856645.gitlab.io/ngx-virtual-scroll/#/demo)
+- [DEMO](https://zw277856645.gitlab.io/ngx-virtual-scroll/components/VirtualScrollComponent.html#example)
 
 ## 📦 安装
 
