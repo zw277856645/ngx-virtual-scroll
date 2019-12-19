@@ -69,7 +69,7 @@ module.exports = webpackMerge(commonConfig, {
         new IndexHtmlWebpackPlugin({
             input: './index.html',
             output: 'index.html',
-            baseHref: '/demo/',
+            baseHref: '/ngx-virtual-scroll/demo/',
             entrypoints: [
                 'polyfills',
                 'vendor',

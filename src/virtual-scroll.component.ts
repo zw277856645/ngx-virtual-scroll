@@ -18,7 +18,7 @@ import { animate, transition, trigger } from '@angular/animations';
 const TWEEN = require('@tweenjs/tween.js');
 
 /**
- * <example-url>/demo/index.html</example-url>
+ * <example-url>/ngx-virtual-scroll/demo/index.html</example-url>
  */
 @Component({
     selector: 'virtual-scroll, [virtualScroll]',
