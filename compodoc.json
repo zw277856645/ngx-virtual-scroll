@@ -10,5 +10,6 @@
   "disableSearch": true,
   "disableDependencies": true,
   "disableRoutesGraph": true,
-  "disableDomTree": true
+  "disableDomTree": true,
+  "disableSourceCode": true
 }
