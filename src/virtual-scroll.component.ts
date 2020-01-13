@@ -666,62 +666,66 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
     }
 
     private refreshPlaceholders() {
-        this.zone.runOutsideAngular(() => {
-            // 计算哪些条目需要渲染(占位符)
-            let viewportInfo = this.createViewportInfo(RefreshType.PLACEHOLDER);
+        if (Array.isArray(this.items) && this.items.length) {
+            this.zone.runOutsideAngular(() => {
+                // 计算哪些条目需要渲染(占位符)
+                let viewportInfo = this.createViewportInfo(RefreshType.PLACEHOLDER);
 
-            if (!this.lastViewportInfo
-                || (this.lastViewportInfo.startIndex !== viewportInfo.startIndex)
-                || (this.lastViewportInfo.endIndex !== viewportInfo.endIndex)) {
-                this.zone.run(() => {
-                    let itemsChange = this.createItemsChange(viewportInfo, RefreshType.PLACEHOLDER);
+                if (!this.lastViewportInfo
+                    || (this.lastViewportInfo.startIndex !== viewportInfo.startIndex)
+                    || (this.lastViewportInfo.endIndex !== viewportInfo.endIndex)) {
+                    this.zone.run(() => {
+                        let itemsChange = this.createItemsChange(viewportInfo, RefreshType.PLACEHOLDER);
 
-                    itemsChange.removed.forEach(item => item[ this.internalAttrs.visible ] = false);
-                    (this as { viewportItems: T[] }).viewportItems = itemsChange.all;
+                        itemsChange.removed.forEach(item => item[ this.internalAttrs.visible ] = false);
+                        (this as { viewportItems: T[] }).viewportItems = itemsChange.all;
 
-                    this.placeholderItemsChange.emit(itemsChange);
-                    this.lastViewportInfo = viewportInfo;
+                        this.placeholderItemsChange.emit(itemsChange);
+                        this.lastViewportInfo = viewportInfo;
 
-                    // 画布需要位移的距离
-                    if (itemsChange.all.length && itemsChange.all[ 0 ][ this.internalAttrs.index ] > 0) {
-                        let prevItem = this.items[ itemsChange.all[ 0 ][ this.internalAttrs.index ] - 1 ];
-                        this.lastContainerOffsetY = prevItem[ this.internalAttrs.accHeight ];
-                    } else {
-                        this.lastContainerOffsetY = 0;
-                    }
-                });
+                        // 画布需要位移的距离
+                        if (itemsChange.all.length && itemsChange.all[ 0 ][ this.internalAttrs.index ] > 0) {
+                            let prevItem = this.items[ itemsChange.all[ 0 ][ this.internalAttrs.index ] - 1 ];
+                            this.lastContainerOffsetY = prevItem[ this.internalAttrs.accHeight ];
+                        } else {
+                            this.lastContainerOffsetY = 0;
+                        }
+                    });
 
-                this.renderer.setStyle(
-                    this.itemsContainer.nativeElement,
-                    'transform',
-                    `translateY(${this.lastContainerOffsetY}px)`
-                );
-            }
-        });
+                    this.renderer.setStyle(
+                        this.itemsContainer.nativeElement,
+                        'transform',
+                        `translateY(${this.lastContainerOffsetY}px)`
+                    );
+                }
+            });
+        }
     }
 
     private refreshVisibles() {
-        this.zone.runOutsideAngular(() => {
-            if (this.itemRender) {
-                // 计算哪些条目需要显示真实模板
-                let viewportInfo = this.createViewportInfo(RefreshType.VISIBLE);
+        if (Array.isArray(this.items) && this.items.length) {
+            this.zone.runOutsideAngular(() => {
+                if (this.itemRender) {
+                    // 计算哪些条目需要显示真实模板
+                    let viewportInfo = this.createViewportInfo(RefreshType.VISIBLE);
 
-                this.zone.run(() => {
-                    this.items.forEach(item => item[ this.internalAttrs.visible ] = false);
+                    this.zone.run(() => {
+                        this.items.forEach(item => item[ this.internalAttrs.visible ] = false);
 
-                    this.items
-                        .slice(viewportInfo.startIndex, viewportInfo.endIndex + 1)
-                        .forEach(item => item[ this.internalAttrs.visible ] = true);
+                        this.items
+                            .slice(viewportInfo.startIndex, viewportInfo.endIndex + 1)
+                            .forEach(item => item[ this.internalAttrs.visible ] = true);
 
-                    if (!this.lastVisibleViewportInfo
-                        || (this.lastVisibleViewportInfo.startIndex !== viewportInfo.startIndex)
-                        || (this.lastVisibleViewportInfo.endIndex !== viewportInfo.endIndex)) {
-                        this.visibleItemsChange.emit(this.createItemsChange(viewportInfo, RefreshType.VISIBLE));
-                        this.lastVisibleViewportInfo = viewportInfo;
-                    }
-                });
-            }
-        });
+                        if (!this.lastVisibleViewportInfo
+                            || (this.lastVisibleViewportInfo.startIndex !== viewportInfo.startIndex)
+                            || (this.lastVisibleViewportInfo.endIndex !== viewportInfo.endIndex)) {
+                            this.visibleItemsChange.emit(this.createItemsChange(viewportInfo, RefreshType.VISIBLE));
+                            this.lastVisibleViewportInfo = viewportInfo;
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private calcStringWidth(width: string | number) {
