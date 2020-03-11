@@ -699,6 +699,8 @@ export class VirtualScrollComponent<T> implements OnChanges, OnInit, AfterViewIn
                     );
                 }
             });
+        } else {
+            (this as { viewportItems: T[] }).viewportItems = [];
         }
     }
 
