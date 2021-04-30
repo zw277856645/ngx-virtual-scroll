@@ -1,0 +1,1601 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ngx-virtual-scroll documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	      <link rel="stylesheet" href="../styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">ngx-virtual-scroll documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li>组件列表</li>
+  <li>VirtualScrollComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#templateData" role="tab" id="templateData-tab" data-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li >
+            <a href="#styleData" role="tab" id="styleData-tab" data-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li >
+            <a href="#example" role="tab" id="example-tab" data-toggle="tab" data-link="example">Examples</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info"><p class="comment">
+    <h3>文件</h3>
+</p>
+<p class="comment">
+    <code>src/virtual-scroll.component.ts</code>
+</p>
+
+    <p class="comment">
+        <h3>描述</h3>
+    </p>
+    <p class="comment">
+        <p><example-url>/ngx-virtual-scroll/demo/index.html</example-url></p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>实现</h3>
+    </p>
+    <p class="comment">
+                    <code><a href="https://angular.io/api/core/OnChanges" target="_blank" >OnChanges</a></code>
+                    <code><a href="https://angular.io/api/core/OnInit" target="_blank" >OnInit</a></code>
+                    <code><a href="https://angular.io/api/core/AfterViewInit" target="_blank" >AfterViewInit</a></code>
+                    <code><a href="https://angular.io/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+    </p>
+
+
+<section>
+    <h3>元数据</h3>
+    <table class="table table-sm table-hover">
+        <tbody>
+
+
+
+
+            <tr>
+                <td class="col-md-3">exportAs</td>
+                <td class="col-md-9"><code>virtualScroll</code></td>
+            </tr>
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>virtual-scroll, [virtualScroll]</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./virtual-scroll.component.less</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./virtual-scroll.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="index">索引</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>方法</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#refresh">refresh</a>
+                            </li>
+                            <li>
+                                <a href="#scrollToIndex">scrollToIndex</a>
+                            </li>
+                            <li>
+                                <a href="#scrollToItem">scrollToItem</a>
+                            </li>
+                            <li>
+                                <a href="#scrollToPosition">scrollToPosition</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>输入属性</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#adjustFactor">adjustFactor</a>
+                            </li>
+                            <li>
+                                <a href="#auditTime">auditTime</a>
+                            </li>
+                            <li>
+                                <a href="#containerMaxHeight">containerMaxHeight</a>
+                            </li>
+                            <li>
+                                <a href="#debounceTime">debounceTime</a>
+                            </li>
+                            <li>
+                                <a href="#dynamicHeight">dynamicHeight</a>
+                            </li>
+                            <li>
+                                <a href="#emptyRender">emptyRender</a>
+                            </li>
+                            <li>
+                                <a href="#itemGap">itemGap</a>
+                            </li>
+                            <li>
+                                <a href="#itemHeight">itemHeight</a>
+                            </li>
+                            <li>
+                                <a href="#itemRender">itemRender</a>
+                            </li>
+                            <li>
+                                <a href="#items">items</a>
+                            </li>
+                            <li>
+                                <a href="#itemWidth">itemWidth</a>
+                            </li>
+                            <li>
+                                <a href="#multiseriate">multiseriate</a>
+                            </li>
+                            <li>
+                                <a href="#observeChanges">observeChanges</a>
+                            </li>
+                            <li>
+                                <a href="#observeIntervalTime">observeIntervalTime</a>
+                            </li>
+                            <li>
+                                <a href="#placeholderPages">placeholderPages</a>
+                            </li>
+                            <li>
+                                <a href="#placeholderRender">placeholderRender</a>
+                            </li>
+                            <li>
+                                <a href="#trackBy">trackBy</a>
+                            </li>
+                            <li>
+                                <a href="#visiblePages">visiblePages</a>
+                            </li>
+                            <li>
+                                <a href="#windowScroll">windowScroll</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>输出属性</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#placeholderItemsChange">placeholderItemsChange</a>
+                            </li>
+                            <li>
+                                <a href="#visibleItemsChange">visibleItemsChange</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>存取器</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#scrollPosition">scrollPosition</a>
+                                </li>
+                                <li>
+                                    <a href="#horizontalGap">horizontalGap</a>
+                                </li>
+                                <li>
+                                    <a href="#verticalGap">verticalGap</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    <section>
+    <h3 id="inputs">输入属性</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="adjustFactor"></a>
+                        <b>adjustFactor</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>0.5</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>「上/下屏幕外真实数量」和「上/下屏幕外占位符数量」调节倍率，有效值范围 0 ≤ n ≤ 1。
+滚动方向比反方向多加载 adjustFactor 倍率的条目</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="auditTime"></a>
+                        <b>auditTime</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>0</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>滚动时刷新<code>占位符条目</code>的时间间隔(ms)，可根据页面性能情况，自行调节</p>
+<ul>
+<li>该值设置的越小越好，可减少/屏蔽滚动时浏览器不能及时刷新导致的空白问题，所以占位符条目越简单越好</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="containerMaxHeight"></a>
+                        <b>containerMaxHeight</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>滚动容器最大高度，仅当 <code>windowScroll = false</code> 时有效</p>
+<p><code>对于非 window 滚动，必须有容器高度，您也可不设定此参数，而在样式中设定</code></p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="debounceTime"></a>
+                        <b>debounceTime</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>300</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>滚动时刷新<code>真实条目</code>的时间间隔(ms)，可根据页面性能情况，自行调节</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dynamicHeight"></a>
+                        <b>dynamicHeight</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>() &#x3D;&gt; undefined</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>条目动态高度判断函数，只在 <code>observeChanges = true</code> 时有效，返回特定场景下的高度值，主要用于加快布局刷新，
+使 <a href="#scrollToPosition">scrollToPosition</a>、<a href="#scrollToIndex">scrollToIndex</a>、
+<a href="#scrollToItem">scrollToItem</a> 能立即滚动到正确位置，对 <a href="#itemHeight">itemHeight</a> 的补充</p>
+<hr>
+<p><strong>使用场景解释：</strong></p>
+<p>适用于含有导航的场景，点击导航通过调用 scrollToPosition、scrollToIndex、scrollToItem 可滚动到相应的位置，
+但当发生动态高度变化且含有过渡动画时，插件自动处理需要经历比较多的轮回才能确定高度稳定，然后刷新布局，有一定的时间延时，
+在这之前调用滚动方法就会滚动到错误位置，某些场景的变化高度可能是确定值，针对此类场景可通过 dynamicHeight 方法返回确定值，
+插件会立即刷新布局从而使滚动方法能正确处理。
+<code>没有导航或对 scrollToPosition、scrollToIndex、scrollToItem 调用无严格要求的情况下，不需要配置本参数</code></p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="emptyRender"></a>
+                        <b>emptyRender</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>TemplateRef&lt;any&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>数据源(items)为空时显示的模板</p>
+<ul>
+<li>您可能会对数据源做筛选等操作，当筛选后没有任何数据时，显示一个类似 &quot;No Results&quot; 的提示是一种比较友好的方式</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="itemGap"></a>
+                        <b>itemGap</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>number | literal type</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>0</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>条目之间间隙</p>
+<ul>
+<li>当为<a href="#multiseriate">多列模式</a>且条目间水平间距和垂直间距不同时，使用对象形式的参数</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="itemHeight"></a>
+                        <b>itemHeight</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>number | string | </code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>条目高度</p>
+<ul>
+<li>插件已设置盒模型为border-box，条目高度 = height + padding-(top、bottom) + border-(top、bottom)，<code>必须设置</code></li>
+<li>不需要每个条目高度都相同，当各条目高度不同时，使用回调函数形式</li>
+<li>当参数值变化时，插件会自动刷新，但如果是回调函数形式，插件只在初始时调用一次，不会跟踪返回值的变化，
+当返回值变化时需要用户自行调用 <a href="#refresh">refresh</a> 方法刷新</li>
+<li>不要给条目设置 margin-top 和 margin-bottom，使用 <a href="#itemGap">itemGap</a> 设置条目的间隙</li>
+</ul>
+<hr>
+<p><strong>回调函数形式示例</strong></p>
+<div><pre class="line-numbers"><code class="language-html">&lt;virtual-scroll [items]=&quot;users&quot; [itemHeight]=&quot;defineItemHeight&quot;&gt;&lt;/virtual-scroll&gt;</code></pre></div><div><pre class="line-numbers"><code class="language-typescript">\&#64;Component({ ... })
+export class DemoComponent {
+
+   users: User[] = [ user1, user2, ... ];
+
+   defineItemHeight(user: User, index: number) {
+      return user.children.length &gt; 0 ? 300 : 200;
+   }
+}</code></pre></div></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="itemRender"></a>
+                        <b>itemRender</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>TemplateRef&lt;NgForOfContext&lt;T&gt;&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>真实条目渲染模板</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="items"></a>
+                        <b>items</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>T[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>数据源</p>
+<p><code>无法识别不可变(immutable)操作导致的数据变化，对于此类操作请改变数组引用，比如排序请使用 arr = [].concat(arr).sort()</code></p>
+<div><pre class="line-numbers"><code class="language-html">&lt;virtual-scroll [items]=&quot;datas | sort | ...&quot;&gt;&lt;/virtual-scroll&gt;</code></pre></div><div><pre class="line-numbers"><code class="language-typescript">\&#64;Pipe({
+     name: &#39;sort&#39;
+})
+export class SortPipe implements PipeTransform {
+
+     transform(datas: any[]) {
+         return [].concat(datas).sort();
+     }
+}</code></pre></div></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="itemWidth"></a>
+                        <b>itemWidth</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>number | string | </code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>条目宽度，插件已设置盒模型为border-box，条目宽度 = width + padding-(left、right) + border-(left、right)，
+<code>多列模式时必须设置</code></p>
+<ul>
+<li>不需要每个条目宽度都相同，当各条目宽度不同时，使用回调函数形式</li>
+<li>当参数值变化时，插件会自动刷新，但如果是回调函数形式，插件只在初始时调用一次，不会跟踪返回值的变化，
+当返回值变化时需要用户自行调用 <a href="#refresh">refresh</a> 方法刷新</li>
+<li>不要给条目设置 margin-left 和 margin-right，使用 itemGap 设置条目的间隙</li>
+<li>与 <a href="#itemHeight">itemHeight</a> 不同的是，可设置为相对于滚动容器宽度的百分比字符串</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="multiseriate"></a>
+                        <b>multiseriate</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>false</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>是否是多列模式，即每行显示多个条目</p>
+<p><code>多列模式不支持动态高度，即 multiseriate 与 observeChanges 不能同时设置为 true</code></p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="observeChanges"></a>
+                        <b>observeChanges</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>false</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>是否开启动态高度监测</p>
+<ul>
+<li>是否使用 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver">MutationObserver</a>
+监测条目 DOM 变化，设置 true 当 DOM 变化导致条目高度变化后将自动刷新。开启后会读取元素原生高度，有一定性能影响，
+请只在无法确定高度的情况下使用，可确定高度请使用 <a href="#itemHeight">itemHeight</a></li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="observeIntervalTime"></a>
+                        <b>observeIntervalTime</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>300</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>监测条目 DOM 变化的时间间隔，只在 <code>observeChanges = true</code> 时有效，用于合并短时间内触发多次的变化事件，减少刷新次数</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="placeholderPages"></a>
+                        <b>placeholderPages</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>0</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>占位符条目页数</p>
+<ul>
+<li>根据容器可视区域高度，每一页为一屏。上/下屏幕外占位符数量 = (placeholderPages - visiblePages) / 2</li>
+<li>根据用户滚动方向，「上/下屏幕外占位符数量」会自动调节，滚动方向的缓存数量会加大</li>
+<li>超出占位符数量的条目不会加载。占位符消耗性能较小，可适当调大本参数优化滚动体验</li>
+<li>visiblePages ≤ placeholderPages，「真实条目」为「占位符条目」中处于可视窗口内的条目</li>
+<li>placeholderPages 不设置或值小于 visiblePages，修正值为 visiblePages</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="placeholderRender"></a>
+                        <b>placeholderRender</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>TemplateRef&lt;NgForOfContext&lt;T&gt;&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>占位符条目渲染模板</p>
+<ul>
+<li>滚动到的条目不会立即显示真实模板，因为用户可能不关心当前数据而继续滚动，先使用性能代价很小的占位元素替代。
+当真实模板比较复杂时，推荐开启占位符功能，可极大优化刷新效率，解决闪烁和空白问题</li>
+<li>如果希望<code>只显示真实条目</code>，可直接设置本参数为真实渲染模板，且真实模板参数 <a href="#itemRender">itemRender</a> 不再设置，
+推荐在真实模本比较简单的情况下使用</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="trackBy"></a>
+                        <b>trackBy</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>    <code>TrackByFunction&lt;T&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>内部 *ngFor 的 trackBy 方法</p>
+<ul>
+<li>不提供则使用自动生成的id为返回值</li>
+<li>推荐为定时刷新的数据源提供该配置，因为插件检测到的数据是变化了的，会重新生成id</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="visiblePages"></a>
+                        <b>visiblePages</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>3</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>真实条目页数</p>
+<ul>
+<li>根据容器可视区域高度，每一页为一屏。上/下屏幕外缓存数量 = (visiblePages - 1) / 2</li>
+<li>根据用户滚动方向，「上/下屏幕外真实数量」会自动调节，滚动方向的缓存数量会加大</li>
+<li>有效值范围 n ≥ 1</li>
+</ul>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="windowScroll"></a>
+                        <b>windowScroll</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>缺省值 : </i><code>false</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>是否是 window 滚动，默认为指令所在元素为滚动窗体</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section>
+    <h3 id="outputs">输出属性</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="placeholderItemsChange"></a>
+                        <b>placeholderItemsChange</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="../classes/ItemChanges.html" target="_self" >EventEmitter&lt;ItemChanges&lt;T&gt;&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>占位符条目改变事件</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="visibleItemsChange"></a>
+                        <b>visibleItemsChange</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>类型 : </i>        <code><a href="../classes/ItemChanges.html" target="_self" >EventEmitter&lt;ItemChanges&lt;T&gt;&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>真实条目改变事件</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section>
+    
+    <h3 id="methods">
+        方法
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="refresh"></a>
+                    <span class="name">
+                        <b>
+                            refresh
+                        </b>
+                        <a href="#refresh"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>refresh(layoutChanged?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, options?: <a href="../classes/RefreshConfig.html">RefreshConfig<T></a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>刷新</p>
+<ul>
+<li>该方法通常不需要调用，插件已内部自动处理。当发生插件无法跟踪的变化导致显示不正常时，可手动调用该方法。
+手动调用时通常调用姿势为 <code>refresh(true)</code>，第二个参数为内部优化使用，您可不必关心</li>
+</ul>
+<hr>
+</div>
+
+                    <div class="io-description">
+                        <b>参数列表 :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>名称</td>
+                                    <td>类型</td>
+                                    <td>可选的</td>
+                                    <td>描述</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>layoutChanged</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        是
+                                    </td>
+
+
+                                    <td>
+                                        <p>布局是否发生变化。不传或传入 false 将不刷新布局</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>options</td>
+                                    <td>
+                                                <code><a href="../classes/RefreshConfig.html" target="_self" >RefreshConfig&lt;T&gt;</a></code>
+                                    </td>
+
+                                    <td>
+                                        是
+                                    </td>
+
+
+                                    <td>
+                                        <p>刷新行为配置</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>返回 : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="scrollToIndex"></a>
+                    <span class="name">
+                        <b>
+                            scrollToIndex
+                        </b>
+                        <a href="#scrollToIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>scrollToIndex(index: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, options?: <a href="../classes/ScrollConfig.html">ScrollConfig</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>滚动到指定下标处的条目</p>
+<hr>
+</div>
+
+                    <div class="io-description">
+                        <b>参数列表 :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>名称</td>
+                                    <td>类型</td>
+                                    <td>可选的</td>
+                                    <td>描述</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>index</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        否
+                                    </td>
+
+
+                                    <td>
+                                        <p>条目在数据源中的下标</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>options</td>
+                                    <td>
+                                                <code><a href="../classes/ScrollConfig.html" target="_self" >ScrollConfig</a></code>
+                                    </td>
+
+                                    <td>
+                                        是
+                                    </td>
+
+
+                                    <td>
+                                        <p>滚动行为配置</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>返回 : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="scrollToItem"></a>
+                    <span class="name">
+                        <b>
+                            scrollToItem
+                        </b>
+                        <a href="#scrollToItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>scrollToItem(item: T, options?: <a href="../classes/ScrollConfig.html">ScrollConfig</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>滚动到指定条目</p>
+<hr>
+</div>
+
+                    <div class="io-description">
+                        <b>参数列表 :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>名称</td>
+                                    <td>类型</td>
+                                    <td>可选的</td>
+                                    <td>描述</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>item</td>
+                                    <td>
+                                            <code>T</code>
+                                    </td>
+
+                                    <td>
+                                        否
+                                    </td>
+
+
+                                    <td>
+                                        <p>条目对象</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>options</td>
+                                    <td>
+                                                <code><a href="../classes/ScrollConfig.html" target="_self" >ScrollConfig</a></code>
+                                    </td>
+
+                                    <td>
+                                        是
+                                    </td>
+
+
+                                    <td>
+                                        <p>滚动行为配置</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>返回 : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="scrollToPosition"></a>
+                    <span class="name">
+                        <b>
+                            scrollToPosition
+                        </b>
+                        <a href="#scrollToPosition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>scrollToPosition(position: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, options?: <a href="../classes/ScrollConfig.html">ScrollConfig</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>滚动到指定位置</p>
+<hr>
+</div>
+
+                    <div class="io-description">
+                        <b>参数列表 :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>名称</td>
+                                    <td>类型</td>
+                                    <td>可选的</td>
+                                    <td>描述</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>position</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        否
+                                    </td>
+
+
+                                    <td>
+                                        <p>滚动条垂直方向位置</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>options</td>
+                                    <td>
+                                                <code><a href="../classes/ScrollConfig.html" target="_self" >ScrollConfig</a></code>
+                                    </td>
+
+                                    <td>
+                                        是
+                                    </td>
+
+
+                                    <td>
+                                        <p>滚动行为配置</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>返回 : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <section>
+    <h3 id="accessors">
+        存取器
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="scrollPosition"></a>
+                        <span class="name"><b>scrollPosition</b><a href="#scrollPosition"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>scrollPosition()</code></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>当前滚动位置</p>
+</div>
+
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="horizontalGap"></a>
+                        <span class="name"><b>horizontalGap</b><a href="#horizontalGap"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>horizontalGap()</code></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>条目之间水平方向间距</p>
+</div>
+
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="verticalGap"></a>
+                        <span class="name"><b>verticalGap</b><a href="#verticalGap"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>verticalGap()</code></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>条目之间垂直方向间距</p>
+</div>
+
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+</section>
+</div>
+
+
+
+    <div class="tab-pane fade " id="c-templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!-- 默认占位符渲染模板 --&gt;
+&lt;ng-template #placeholderTemplate&gt;
+  &lt;div class&#x3D;&quot;placeholder&quot;&gt;
+    &lt;div class&#x3D;&quot;loader&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/ng-template&gt;
+
+&lt;!-- 空渲染模板 --&gt;
+&lt;ng-container *ngIf&#x3D;&quot;(!viewportItems || !viewportItems.length) &amp;&amp; emptyRender&quot;&gt;
+  &lt;div class&#x3D;&quot;empty-wrapper&quot;
+       [style.padding-top.px]&#x3D;&quot;verticalGap / 2&quot;
+       [style.padding-bottom.px]&#x3D;&quot;verticalGap / 2&quot;
+       [style.padding-left.px]&#x3D;&quot;horizontalGap / 2&quot;
+       [style.padding-right.px]&#x3D;&quot;horizontalGap / 2&quot;&gt;
+    &lt;ng-template [ngTemplateOutlet]&#x3D;&quot;emptyRender&quot;&gt;&lt;/ng-template&gt;
+  &lt;/div&gt;
+&lt;/ng-container&gt;
+
+&lt;!-- 仅用于撑开高度 --&gt;
+&lt;div class&#x3D;&quot;total-height&quot; [class.empty]&#x3D;&quot;!items || !items.length&quot; #totalHeight&gt;&lt;/div&gt;
+
+&lt;div class&#x3D;&quot;items-container&quot; [class.scrolling]&#x3D;&quot;scrolling&quot; #itemsContainer&gt;
+  &lt;ng-container *ngFor&#x3D;&quot;let item of viewportItems;trackBy:trackByItems&quot;&gt;
+    &lt;!-- 支持动态高度 &amp; 非多列模式 --&gt;
+    &lt;ng-container *ngIf&#x3D;&quot;observeChanges &amp;&amp; !multiseriate; else fixedTemplate&quot;&gt;
+      &lt;!-- 真实条目 --&gt;
+      &lt;ng-container *ngIf&#x3D;&quot;itemRender ? item[internalAttrs.visible] : true; else dynamicPlaceholderTemplate&quot;&gt;
+        &lt;div class&#x3D;&quot;item-wrapper real&quot;
+             [id]&#x3D;&quot;item[internalAttrs.id]&quot;
+             [style.min-height.px]&#x3D;&quot;item[internalAttrs.height]&quot;
+             @stopChildrenAnimations&gt;
+          &lt;div [style.padding-top.px]&#x3D;&quot;verticalGap / 2&quot;
+               [style.padding-bottom.px]&#x3D;&quot;verticalGap / 2&quot;
+               visibleObserver
+               [item]&#x3D;&quot;item&quot;
+               (heightChanged)&#x3D;&quot;mergeHeightChanges($event)&quot;&gt;
+            &lt;ng-template [ngTemplateOutlet]&#x3D;&quot;itemRender || placeholderRender&quot;
+                         [ngTemplateOutletContext]&#x3D;&quot;getItemContext(item)&quot;&gt;&lt;/ng-template&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/ng-container&gt;
+
+      &lt;!-- 占位符条目 --&gt;
+      &lt;ng-template #dynamicPlaceholderTemplate&gt;
+        &lt;div class&#x3D;&quot;item-wrapper&quot;
+             [id]&#x3D;&quot;item[internalAttrs.id]&quot;
+             [style.min-height.px]&#x3D;&quot;item[internalAttrs.dynamicHeight] || item[internalAttrs.height]&quot;
+             [style.padding-top.px]&#x3D;&quot;verticalGap / 2&quot;
+             [style.padding-bottom.px]&#x3D;&quot;verticalGap / 2&quot;
+             placeholderObserver
+             [item]&#x3D;&quot;item&quot;&gt;
+          &lt;ng-template [ngTemplateOutlet]&#x3D;&quot;placeholderRender&quot;
+                       [ngTemplateOutletContext]&#x3D;&quot;getItemContext(item)&quot;&gt;&lt;/ng-template&gt;
+        &lt;/div&gt;
+      &lt;/ng-template&gt;
+    &lt;/ng-container&gt;
+
+    &lt;!-- 不支持动态高度 / 多列模式 --&gt;
+    &lt;ng-template #fixedTemplate&gt;
+      &lt;div class&#x3D;&quot;item-wrapper&quot;
+           [id]&#x3D;&quot;item[internalAttrs.id]&quot;
+           [style.min-height.px]&#x3D;&quot;item[internalAttrs.dynamicHeight] || item[internalAttrs.height]&quot;
+           [style.width]&#x3D;&quot;multiseriate ? (item[internalAttrs.width] + &#x27;px&#x27;) : &#x27;100%&#x27;&quot;
+           [style.padding-top.px]&#x3D;&quot;verticalGap / 2&quot;
+           [style.padding-bottom.px]&#x3D;&quot;verticalGap / 2&quot;
+           [style.padding-left.px]&#x3D;&quot;horizontalGap / 2&quot;
+           [style.padding-right.px]&#x3D;&quot;horizontalGap / 2&quot;&gt;
+        &lt;ng-template
+          [ngTemplateOutlet]&#x3D;&quot;item[internalAttrs.visible] ? (itemRender || placeholderRender) : placeholderRender&quot;
+          [ngTemplateOutletContext]&#x3D;&quot;getItemContext(item)&quot;&gt;&lt;/ng-template&gt;
+      &lt;/div&gt;
+    &lt;/ng-template&gt;
+  &lt;/ng-container&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="c-styleData">
+                <p class="comment">
+                    <code>./virtual-scroll.component.less</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">* {
+  box-sizing: border-box !important;
+}
+
+:host {
+  position: relative;
+}
+
+:host(virtual-scroll) {
+  display: block;
+}
+
+.empty-wrapper {
+  width: 100%;
+}
+
+.total-height {
+  width: 1px;
+  opacity: 0;
+  &amp;.empty {
+    height: auto !important;
+  }
+}
+
+.items-container {
+  display: flex;
+  flex-wrap: wrap;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  contain: content;
+  transform: translateY(0);
+  &amp;.scrolling {
+    pointer-events: none;
+  }
+  &amp; &gt; .item-wrapper {
+    width: 100%;
+    display: flex;
+    position: relative;
+    &amp;:not(.real) {
+      height: 1px;
+    }
+    &amp;::ng-deep &gt; *:not([visibleObserver]) {
+      width: 100%;
+      height: 100%;
+    }
+    [visibleObserver] {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      &amp;::ng-deep &gt; * {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.placeholder {
+  border: 1px solid rgba(34, 36, 38, .15);
+  border-radius: .28571429rem;
+  background-color: rgba(255, 255, 255, .85);
+  position: relative;
+  .loader {
+    width: 2.28571429em;
+    height: 2.28571429em;
+    font-size: 1em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    z-index: 1000;
+    transform: translateX(-50%) translateY(-50%);
+    &amp;:before, &amp;:after {
+      width: 2.28571429em;
+      height: 2.28571429em;
+      margin: 0 0 0 -1.14285714em;
+    }
+    &amp;:before {
+      position: absolute;
+      content: &#x27;&#x27;;
+      top: 0;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 500rem;
+      border: .2em solid rgba(0, 0, 0, .1);
+    }
+    &amp;:after {
+      position: absolute;
+      content: &#x27;&#x27;;
+      top: 0;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      animation: vs-loader .6s linear;
+      animation-iteration-count: infinite;
+      border-radius: 500rem;
+      border-color: #767676 transparent transparent;
+      border-style: solid;
+      border-width: .2em;
+      box-shadow: 0 0 0 1px transparent;
+    }
+  }
+}
+
+@keyframes vs-loader {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}</code></pre>
+    </div>
+
+
+    <div class="tab-pane fade " id="c-example">
+            <iframe class="exampleContainer" src="/ngx-virtual-scroll/demo/index.html">
+                <p>no-iframes</p>
+            </iframe>
+    </div>
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!-- 默认占位符渲染模板 --><ng-template #placeholderTemplate>  <div class="placeholder">    <div class="loader"></div>  </div></ng-template><!-- 空渲染模板 --><ng-container *ngIf="(!viewportItems || !viewportItems.length) && emptyRender">  <div class="empty-wrapper"       [style.padding-top.px]="verticalGap / 2"       [style.padding-bottom.px]="verticalGap / 2"       [style.padding-left.px]="horizontalGap / 2"       [style.padding-right.px]="horizontalGap / 2">    <ng-template [ngTemplateOutlet]="emptyRender"></ng-template>  </div></ng-container><!-- 仅用于撑开高度 --><div class="total-height" [class.empty]="!items || !items.length" #totalHeight></div><div class="items-container" [class.scrolling]="scrolling" #itemsContainer>  <ng-container *ngFor="let item of viewportItems;trackBy:trackByItems">    <!-- 支持动态高度 & 非多列模式 -->    <ng-container *ngIf="observeChanges && !multiseriate; else fixedTemplate">      <!-- 真实条目 -->      <ng-container *ngIf="itemRender ? item[internalAttrs.visible] : true; else dynamicPlaceholderTemplate">        <div class="item-wrapper real"             [id]="item[internalAttrs.id]"             [style.min-height.px]="item[internalAttrs.height]"             @stopChildrenAnimations>          <div [style.padding-top.px]="verticalGap / 2"               [style.padding-bottom.px]="verticalGap / 2"               visibleObserver               [item]="item"               (heightChanged)="mergeHeightChanges($event)">            <ng-template [ngTemplateOutlet]="itemRender || placeholderRender"                         [ngTemplateOutletContext]="getItemContext(item)"></ng-template>          </div>        </div>      </ng-container>      <!-- 占位符条目 -->      <ng-template #dynamicPlaceholderTemplate>        <div class="item-wrapper"             [id]="item[internalAttrs.id]"             [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"             [style.padding-top.px]="verticalGap / 2"             [style.padding-bottom.px]="verticalGap / 2"             placeholderObserver             [item]="item">          <ng-template [ngTemplateOutlet]="placeholderRender"                       [ngTemplateOutletContext]="getItemContext(item)"></ng-template>        </div>      </ng-template>    </ng-container>    <!-- 不支持动态高度 / 多列模式 -->    <ng-template #fixedTemplate>      <div class="item-wrapper"           [id]="item[internalAttrs.id]"           [style.min-height.px]="item[internalAttrs.dynamicHeight] || item[internalAttrs.height]"           [style.width]="multiseriate ? (item[internalAttrs.width] + \'px\') : \'100%\'"           [style.padding-top.px]="verticalGap / 2"           [style.padding-bottom.px]="verticalGap / 2"           [style.padding-left.px]="horizontalGap / 2"           [style.padding-right.px]="horizontalGap / 2">        <ng-template          [ngTemplateOutlet]="item[internalAttrs.visible] ? (itemRender || placeholderRender) : placeholderRender"          [ngTemplateOutletContext]="getItemContext(item)"></ng-template>      </div>    </ng-template>  </ng-container></div></div>'
+    var COMPONENTS = [{'name': 'VirtualScrollComponent', 'selector': 'virtual-scroll, [virtualScroll]'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'VirtualScrollComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">无匹配的结果 "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'VirtualScrollComponent.html';
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="../js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

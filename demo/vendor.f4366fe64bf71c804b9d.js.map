@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./demo/vendor.ts"],"names":["__webpack_require__"],"mappings":"mKAAAA,EAAA,QACAA,EAAA","file":"vendor.f4366fe64bf71c804b9d.js","sourcesContent":["import '../node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css';\nimport '../node_modules/semantic-ui-css/semantic.css';"],"sourceRoot":""}

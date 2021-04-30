@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ngx-virtual-scroll documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+	      <link rel="stylesheet" href="./styles/style.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="./" class="navbar-brand">ngx-virtual-scroll documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content getting-started">
+                   <div class="content-data">
+
+<h1 id="ngx-virtual-scroll">ngx-virtual-scroll</h1>
+<p>angular 虚拟滚动插件，适用于大数据量列表展示</p>
+<h2 id="✨-插件特性">✨ 插件特性</h2>
+<ul>
+<li>支持不固定的高度/宽度，当条目的布局变化时自动刷新</li>
+<li>支持使用占位符模板优化响应速度，占位符模板可自定义</li>
+<li>支持根据当前滚动方向，动态调整容器上下不可见区域显示条目的个数</li>
+<li>支持多列布局，即每行显示多个条目</li>
+</ul>
+<h2 id="🔗-链接">🔗 链接</h2>
+<ul>
+<li><a href="https://zw277856645.github.io/ngx-virtual-scroll/">DOCS</a></li>
+<li><a href="https://zw277856645.github.io/ngx-virtual-scroll/components/VirtualScrollComponent.html#example">DEMO</a></li>
+<li><a href="https://github.com/zw277856645/ngx-virtual-scroll">PROJECT</a></li>
+</ul>
+<h2 id="📦-安装">📦 安装</h2>
+<blockquote>
+<p>npm install @demacia/ngx-virtual-scroll --save</p>
+</blockquote>
+<h2 id="🔨-使用">🔨 使用</h2>
+<h6 id="引入module">引入module</h6>
+<div><pre class="line-numbers"><code class="language-js">import { VirtualScrollModule } from &#39;&#64;demacia/ngx-virtual-scroll&#39;;
+
+&#64;NgModule({
+    imports: [
+        VirtualScrollModule
+    ]
+})
+export class AppModule {
+}</code></pre></div><h6 id="标签或属性使用">标签或属性使用</h6>
+<div><pre class="line-numbers"><code class="language-html">&lt;div virtualScroll ...&gt; ... &lt;/div&gt;
+&lt;!-- 或 --&gt;
+&lt;virtual-scroll ...&gt; ... &lt;/virtualScroll&gt;</code></pre></div><h6 id="参数设置">参数设置</h6>
+<div><pre class="line-numbers"><code class="language-html">&lt;virtual-scroll class=&quot;cards&quot;
+                [items]=&quot;users&quot;
+                [itemHeight]=&quot;isAdmin ? 150 : 100&quot;
+                [emptyRender]=&quot;emptyTemplate&quot;
+                [placeholderRender]=&quot;placeholderTemplate&quot;
+                [itemRender]=&quot;itemTemplate&quot;
+                ...&gt;
+  &lt;ng-template #emptyTemplate&gt;
+    &lt;div class=&quot;empty&quot;&gt;No Results&lt;/div&gt;    
+  &lt;/ng-template&gt;
+
+  &lt;!-- 滚动未稳定时真实模板的替换模板(占位符)，当真实模板比较复杂(耗性能)时，可极大提升滚动体验 --&gt;
+  &lt;ng-template #placeholderTemplate let-user&gt;
+    &lt;div class=&quot;card&quot;&gt;{{user.name}}&lt;/div&gt;    
+  &lt;/ng-template&gt;
+
+  &lt;!-- 模板数据结构与 NgForOfContext 相同，$implicit 为当前迭代数据 --&gt;
+  &lt;ng-template #itemTemplate let-user let-index=&quot;index&quot; let-first=&quot;first&quot; let-last=&quot;last&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;num&quot;&gt;{{index}}&lt;/div&gt;
+      &lt;div class=&quot;name&quot;&gt;{{user.name}}&lt;/div&gt;
+      &lt;div class=&quot;operators&quot; *ngIf=&quot;isAdmin&quot;&gt; ... &lt;/div&gt;
+      ...
+    &lt;/div&gt;    
+  &lt;/ng-template&gt;
+&lt;/virtualScroll&gt;</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> result-matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">无匹配的结果 "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 0;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'getting-started';
+            var COMPODOC_CURRENT_PAGE_URL = 'index.html';
+       </script>
+
+       <script src="./js/libs/custom-elements.min.js"></script>
+       <script src="./js/libs/lit-html.js"></script>
+       <!-- Required to polyfill modern browsers as code is ES5 for IE... -->
+       <script src="./js/libs/custom-elements-es5-adapter.js" charset="utf-8" defer></script>
+       <script src="./js/menu-wc.js" defer></script>
+
+       <script src="./js/libs/bootstrap-native.js"></script>
+
+       <script src="./js/libs/es6-shim.min.js"></script>
+       <script src="./js/libs/EventDispatcher.js"></script>
+       <script src="./js/libs/promise.min.js"></script>
+       <script src="./js/libs/zepto.min.js"></script>
+
+       <script src="./js/compodoc.js"></script>
+
+       <script src="./js/tabs.js"></script>
+       <script src="./js/menu.js"></script>
+       <script src="./js/libs/clipboard.min.js"></script>
+       <script src="./js/libs/prism.js"></script>
+       <script src="./js/sourceCode.js"></script>
+       <script src="./js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
