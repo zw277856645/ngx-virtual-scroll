@@ -1,0 +1,26 @@
+language: node_js 
+node_js:
+  - "v11.14.0"  
+branches:
+  only:
+    - master    
+cache:
+  directories:
+    - node_modules 
+before_install:
+  - export TZ='Asia/Shanghai'  
+install:
+  - npm i
+script:
+  - npm run docs:build
+  - npm run demo:build
+  - cp -r docs/. _pages
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN 
+  local-dir: ./_pages/ 
+  target-branch: gh-pages
+  verbose: true
+  on:
+    branch: master
